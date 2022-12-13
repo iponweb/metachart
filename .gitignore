@@ -1,0 +1,7 @@
+*.iml
+inspections
+src
+bin
+.coverage*
+vendor
+.idea

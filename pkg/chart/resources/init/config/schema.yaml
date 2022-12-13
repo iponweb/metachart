@@ -1,0 +1,29 @@
+.defaults:
+  disallowed: &defaultDisallowed
+    - status
+    - kind
+    - apiVersion
+  properties: &defaultProperties
+    enabled: metachart.interface.boolean
+    metadata: metachart.api.meta.v1.ObjectMeta
+  rootKey: &defaultRootKey
+    disallowed: *defaultDisallowed
+    properties: *defaultProperties
+
+definitions:
+  - https://raw.githubusercontent.com/iponweb/schemas/main/json-schemas/external-secrets/v0.6.1-strict/_definitions.json
+
+rules:
+  #: Common
+  #:
+  #: meta.v1.ObjectMeta
+  - target: metachart.api.meta.v1.ObjectMeta
+    source: io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
+    allowed:
+      - annotations
+      - labels
+      - finalizers
+      - namespace
+      - name
+    properties:
+      checksums: metachart.interface.checksums

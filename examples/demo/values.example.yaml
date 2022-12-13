@@ -1,0 +1,60 @@
+# context is a recommended way to define user-provided free form data to be
+# used in templates
+context:
+  contextVariable: contextVariableValue
+
+deployments:
+  main:
+    #: Explicitly enable the resource
+    enabled: true
+
+    related:
+      #: Create a service linked with the main Deployment
+      services:
+        main:
+          spec:
+            ports:
+              - name: http
+                port: 80
+                targetPort: 80
+                protocol: TCP
+
+    #: Resource definition
+    metadata:
+      labels:
+        resource-label: resource-label-value
+    spec:
+      template:
+        metadata:
+          checksums:
+            #: Restart Deployment pods on the `main` configmap change
+            configmaps:
+              - main
+        spec:
+          containers:
+            - name: main
+              image: nginx:latest
+
+configmaps:
+  main:
+    data:
+      #: Template including the context.contextVariable variable
+      FROM_CONTEXT: "{{ $.Values.context.contextVariable }}"
+
+settings:
+  global:
+    labels: {}
+    annotations: {}
+
+  configmaps:
+    #: Explicitly enable resources kind
+    disabled: false
+  deployments:
+    defaults:
+      spec:
+        template:
+          metadata:
+            #: By default - restart on any configmaps change
+            checksums:
+              configmaps: "*"
+  services: {}

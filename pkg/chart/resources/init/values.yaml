@@ -1,0 +1,10 @@
+# context can be used to define any user-provided structure to use in values
+# templating
+context: {}
+
+# fullnameOverride overrides value of $.Release.Name for resources release name
+# prefixes
+fullnameOverride:
+
+# settings configures chart behaviour
+settings: {}
