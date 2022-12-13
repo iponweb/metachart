@@ -21,7 +21,7 @@ Download the latest binary from the [Releases](/releases) page.
 On macos the application can be installed using [Homebrew](https://brew.sh/):
 
 ```shell
-brew tap iponweb/iponweb
+brew tap iponweb/tap
 brew update
 brew install metachart
 ```
