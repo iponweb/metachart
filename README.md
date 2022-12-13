@@ -16,7 +16,8 @@ What `metachart` born charts can provide:
 
 ## Installation
 
-Download the latest binary from the [Releases](/releases) page.
+Download the latest binary from the
+[Releases](https://github.com/iponweb/metachart/releases) page.
 
 On macos the application can be installed using [Homebrew](https://brew.sh/):
 
