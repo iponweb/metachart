@@ -11,7 +11,7 @@
     properties: *defaultProperties
 
 definitions:
-  - https://raw.githubusercontent.com/iponweb/schemas/main/json-schemas/external-secrets/v0.6.1-strict/_definitions.json
+  - https://raw.githubusercontent.com/iponweb/schemas/main/json-schemas/kubernetes/v1.25.2-strict/_definitions.json
 
 rules:
   #: Common

@@ -168,7 +168,9 @@ Return: dict in json format
 {{- /* Execution */}}
 {{- $resourceMeta := default dict $definition.metadata }}
 {{- $checksums := (include "metachart.resourceChecksumAnnotations" (merge (dict "params" $params) $context) | fromJson) }}
-{{- $result := merge (default dict ($resourceMeta.annotations) | deepCopy) (default dict $.Values.annotations) $checksums }}
+{{- $globalAnnotations := default dict (default dict (default dict $.Values.settings).global).annotations | deepCopy }}
+{{- $resourceAnnotations := default dict $resourceMeta.annotations | deepCopy }}
+{{- $result := merge $resourceAnnotations $globalAnnotations $checksums }}
 {{- /* Return */}}
 {{- $result | toJson}}
 {{- end }}

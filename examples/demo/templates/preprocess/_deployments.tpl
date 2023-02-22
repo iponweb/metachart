@@ -3,28 +3,28 @@
 {{- $params := $.params | deepCopy }}
 {{- $context := omit $ "params" }}
 {{- /* Get params */}}
-{{- $resource := $params.resource }}
+{{- $definition := $params.definition }}
 {{- $name := $params.name }}
 {{- $component := $params.component }}
 {{- /* Execution */}}
 {{- /* Set spec.selector */}}
-{{- $_ := set $resource.spec "selector" (dict "matchLabels" (include "metachart.selectorLabels" (merge (dict "params"
+{{- $_ := set $definition.spec "selector" (dict "matchLabels" (include "metachart.selectorLabels" (merge (dict "params"
   (dict
     "component" $component
   )) $context) | fromJson) ) }}
 {{- /* Read template definition */}}
-{{- $template := get $resource.spec "template" | deepCopy }}
-{{- $_ = unset $resource.spec "template" }}
+{{- $template := get $definition.spec "template" | deepCopy }}
+{{- $_ = unset $definition.spec "template" }}
 {{- /* Apply metadata */}}
 {{- $_ = set $template "metadata" (include "metachart.resourceMeta" (merge (dict "params"
   (dict
-    "resource" $template
-    "resourceName" $name
+    "definition" $template
+    "name" $name
     "component" $component
     "withName" false
   )) $context) | fromJson) }}
 {{- /* Set spec.template */}}
-{{- $_ = set $resource.spec "template" $template }}
+{{- $_ = set $definition.spec "template" $template }}
 {{- /* Return */}}
-{{- $resource | toJson }}
+{{- $definition | toJson }}
 {{- end }}

@@ -3,17 +3,17 @@
 {{- $params := $.params | deepCopy }}
 {{- $context := omit $ "params" }}
 {{- /* Get params */}}
-{{- $resource := $params.resource }}
+{{- $definition := $params.definition }}
 {{- $name := $params.name }}
 {{- $component := $params.component }}
 {{- $relatedComponent := $params.relatedComponent }}
 {{- /* Execution */}}
 {{- if $relatedComponent }}
-  {{ $_ := set $resource.spec "selector" (include "metachart.selectorLabels" (merge (dict "params"
+  {{ $_ := set $definition.spec "selector" (include "metachart.selectorLabels" (merge (dict "params"
   (dict
     "component" $relatedComponent
   )) $context) | fromJson) }}
 {{- end }}
 {{- /* Return */}}
-{{- $resource | toJson }}
+{{- $definition | toJson }}
 {{- end }}

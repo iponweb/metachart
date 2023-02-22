@@ -1,9 +1,11 @@
-{{/* vim: set filetype=mustache: */}}
-
 {{/*
 Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-Use only helm release name because helm chart is made to be used by different kinds of applications.
+Truncate at 63 chars because some Kubernetes name fields are limited to this
+(by the DNS naming spec).
+Use only helm release name because helm chart is made to be used by different
+kinds of applications.
+
+Return: string
 */}}
 {{- define "metachart.fullname" -}}
 {{- if $.Values.fullnameOverride }}
@@ -14,14 +16,18 @@ Use only helm release name because helm chart is made to be used by different ki
 {{- end }}
 
 {{/*
-Create chart name and version as used by the chart label.
+Compute chart name-version to be used by the chart label
+
+Return: string
 */}}
 {{- define "metachart.chart" -}}
 {{- printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
-Chart labels
+Compute Chart labels
+
+Return: dict in json format
 */}}
 {{- define "metachart.chartLabels" -}}
 {{- $result := dict
@@ -37,14 +43,14 @@ Chart labels
 {{- end }}
 
 {{/*
-Label selectors
+Label selector to determine if a resource belongs to a component. Only
+necessary and sufficient set of labels is used.
 
-IMPORTANT: Do not include here labels which may be changed between releases
-such as:
-- Release number
-- Chart version
+Params:
 
-Use only necessary and sufficient set of resources to identify a resource
+  component : str - Component value which the resource belongs to
+
+Return: dict in json format
 */}}
 {{- define "metachart.selectorLabels" -}}
 {{- /* Cleanup context from the function params */}}
@@ -61,16 +67,27 @@ Use only necessary and sufficient set of resources to identify a resource
 {{- $result | toJson }}
 {{- end }}
 
+{{/*
+Compute resource labels
+
+Params:
+
+  definition : dict - Resource definition
+  component : str - Resource component value
+  relatedComponent : str - Related resource component value
+
+Return: dict in json format
+*/}}
 {{- define "metachart.resourceLabels" -}}
 {{- /* Cleanup context from the function params */}}
 {{- $params := $.params | deepCopy }}
 {{- $context := omit $ "params" }}
 {{- /* Get params */}}
-{{- $resource := $params.resource }}
+{{- $definition := $params.definition }}
 {{- $component := default nil $params.component }}
 {{- $relatedComponent := default nil $params.relatedComponent }}
-{{- $resourceMeta := default dict $resource.metadata }}
 {{- /* Execution */}}
+{{- $resourceMeta := default dict $definition.metadata }}
 {{- $chartLabels := include "metachart.chartLabels" $context | fromJson }}
 {{- $globalLabels := default dict (default dict (default dict $.Values.settings).global).labels | deepCopy }}
 {{- $resourceLabels := default dict $resourceMeta.labels | deepCopy }}
@@ -93,15 +110,24 @@ Use only necessary and sufficient set of resources to identify a resource
 {{- $result | toJson }}
 {{- end }}
 
-{{- define "metachart.resourceAnnotationsChecksums" -}}
+{{/*
+Compute checksums annotations for a resource
+
+Params:
+
+  definition : dict - Resource definition
+
+Return: dict in json format
+*/}}
+{{- define "metachart.resourceChecksumAnnotations" -}}
 {{- /* Cleanup context from the function params */}}
 {{- $params := $.params | deepCopy }}
 {{- $context := omit $ "params" }}
 {{- /* Get params */}}
-{{- $resource := $params.resource }}
+{{- $definition := $params.definition }}
 {{- /* Execution */}}
 {{- $result := dict }}
-{{- $checksums := default dict (default dict $resource.metadata).checksums }}
+{{- $checksums := default dict (default dict $definition.metadata).checksums }}
 {{- range $kind, $names := $checksums }}
   {{- if $names }}
     {{- if (kindIs "slice" $names) }}
@@ -124,32 +150,56 @@ Use only necessary and sufficient set of resources to identify a resource
 {{- $result | toJson}}
 {{- end }}
 
+{{/*
+Compute resource annotations
+
+Params:
+
+  definition : dict - Resource definition
+
+Return: dict in json format
+*/}}
 {{- define "metachart.resourceAnnotations" -}}
 {{- /* Cleanup context from the function params */}}
 {{- $params := $.params | deepCopy }}
 {{- $context := omit $ "params" }}
 {{- /* Get params */}}
-{{- $resource := $params.resource }}
+{{- $definition := $params.definition }}
 {{- /* Execution */}}
-{{- $resourceMeta := default dict $resource.metadata }}
-{{- $checksums := (include "metachart.resourceAnnotationsChecksums" (merge (dict "params" $params) $context) | fromJson) }}
-{{- $result := merge (default dict ($resourceMeta.annotations) | deepCopy) (default dict $.Values.annotations) $checksums }}
+{{- $resourceMeta := default dict $definition.metadata }}
+{{- $checksums := (include "metachart.resourceChecksumAnnotations" (merge (dict "params" $params) $context) | fromJson) }}
+{{- $globalAnnotations := default dict (default dict (default dict $.Values.settings).global).annotations | deepCopy }}
+{{- $resourceAnnotations := default dict $resourceMeta.annotations | deepCopy }}
+{{- $result := merge $resourceAnnotations $globalAnnotations $checksums }}
 {{- /* Return */}}
 {{- $result | toJson}}
 {{- end }}
 
+{{/*
+Compute resource ObjectMeta
+
+Params:
+
+  definition : dict - Resource definition
+  name : string - Resource name as defined in the values file
+  nameSuffix : string - Suffix to be added to the resource name
+  withName : bool - Whether name key must be added (default: true)
+  withNameFullnamePrefix : bool - Whether fullname prefix must be added to the name (default: true)
+
+Return: dict in json format
+*/}}
 {{- define "metachart.resourceMeta" -}}
 {{- /* Cleanup context from the function params */}}
 {{- $params := $.params | deepCopy }}
 {{- $context := omit $ "params" }}
 {{- /* Get params */}}
-{{- $resource := $params.resource }}
-{{- $resourceName := $params.resourceName }}
-{{- $resourceNameSuffix := $params.resourceNameSuffix }}
+{{- $definition := $params.definition }}
+{{- $name := $params.name }}
+{{- $nameSuffix := $params.nameSuffix }}
 {{- $withName := (hasKey $params "withName" | ternary $params.withName true) }}
 {{- $withNameFullnamePrefix := (hasKey $params "withNameFullnamePrefix" | ternary $params.withNameFullnamePrefix true) }}
 {{- /* Execution */}}
-{{- $resourceMeta := default dict $resource.metadata }}
+{{- $resourceMeta := default dict $definition.metadata }}
 {{- /* Execution */}}
 {{- $result := omit $resourceMeta "labels" "annotations" "name" "checksums" }}
 {{- $fullnamePrefix := "" }}
@@ -159,15 +209,15 @@ Use only necessary and sufficient set of resources to identify a resource
 {{- if $withName }}
   {{- if $resourceMeta.name }}
     {{- $_ := set $result "name" $resourceMeta.name }}
-  {{- else if $resourceName }}
-    {{- if $resourceNameSuffix }}
-      {{- $_ := set $result "name" (printf "%s%s-%s" $fullnamePrefix $resourceName $resourceNameSuffix) }}
+  {{- else if $name }}
+    {{- if $nameSuffix }}
+      {{- $_ := set $result "name" (printf "%s%s-%s" $fullnamePrefix $name $nameSuffix) }}
     {{- else }}
-      {{- $_ := set $result "name" (printf "%s%s" $fullnamePrefix $resourceName) }}
+      {{- $_ := set $result "name" (printf "%s%s" $fullnamePrefix $name) }}
     {{- end }}
   {{- else }}
-    {{- if $resourceNameSuffix }}
-      {{- $_ := set $result "name" (printf "%s%s" $fullnamePrefix $resourceNameSuffix) }}
+    {{- if $nameSuffix }}
+      {{- $_ := set $result "name" (printf "%s%s" $fullnamePrefix $nameSuffix) }}
     {{- else }}
       {{- $_ := set $result "name" (printf "%s" (include "metachart.fullname" $context)) }}
     {{- end }}
@@ -180,7 +230,13 @@ Use only necessary and sufficient set of resources to identify a resource
 {{- end }}
 
 {{/*
-Correctly render values files entries which strings may contain templates
+Discover all string values and render them as templates
+
+Params:
+
+  data : any - data to be processed
+
+Return: dict in json format
 */}}
 {{- define "metachart.deepRender" -}}
 {{- /* Cleanup context from the function params */}}
@@ -235,6 +291,18 @@ Correctly render values files entries which strings may contain templates
 {{- end }}
 {{- end }}
 
+{{/*
+Deep merge like function which concats 2 slices if meets in instead of
+override. This implementation takes into account that each of source and target
+values can be none one of specific type or nil.
+
+Params:
+
+  source : dict | slice - Merge from
+  target : dict | slice - Merge to
+
+Return: dict | slice in json format
+*/}}
 {{- define "metachart.mergeConcatLists" }}
 {{- /* Cleanup context from the function params */}}
 {{- $params := $.params | deepCopy }}
@@ -273,23 +341,45 @@ Correctly render values files entries which strings may contain templates
 {{- $result | toJson }}
 {{- end }}
 
+{{/*
+Discover defaults for the specific kind and apply them to the resource
+
+Params:
+
+  definition : dict - Resource definition
+  kind : string - Resource kind
+
+Return: dict in json format
+*/}}
 {{- define "metachart.setDefaults" }}
 {{- /* Cleanup context from the function params */}}
 {{- $params := $.params | deepCopy }}
 {{- $context := omit $ "params" }}
 {{- /* Get params */}}
-{{- $resource := ($params.resource | deepCopy) }}
+{{- $definition := ($params.definition | deepCopy) }}
 {{- $kind := $params.kind }}
-{{- $resourceSettings := ternary (get $.Values.settings $kind) (dict) (hasKey (default dict $.Values.settings) $kind) }}
+{{- $kindSettings := ternary (get $.Values.settings $kind) (dict) (hasKey (default dict $.Values.settings) $kind) }}
 {{- /* Execution */}}
-{{- $defaults := default dict $resourceSettings.defaults }}
+{{- $defaults := default dict $kindSettings.defaults }}
 {{- include "metachart.mergeConcatLists" (dict "params" (dict
   "source" $defaults
-  "target" $resource
+  "target" $definition
 )) }}
 {{- end }}
 
-{{- /* Discover all available resources specific kund */}}
+{{/*
+Discover all available resources (standalone and related) of specific kind.
+It takes into account:
+
+- If resource kind is not disable in settings
+- If resource definition.enabled is not false
+
+Params:
+
+  kind : string - Resource kind
+
+Return: dict in json format
+*/}}
 {{- define "metachart.discover" }}
 {{- /* Cleanup context from the function params */}}
 {{- $params := $.params | deepCopy }}
@@ -298,11 +388,11 @@ Correctly render values files entries which strings may contain templates
 {{- $kind := $params.kind }}
 {{- /* Execution */}}
 {{- $result := dict }}
-{{- $resourceSettings := dict }}
+{{- $kindSettings := dict }}
 {{- if hasKey (default dict $.Values.settings) $kind }}
-  {{- $resourceSettings = get (default dict $.Values.settings) $kind }}
+  {{- $kindSettings = get (default dict $.Values.settings) $kind }}
 {{- end }}
-{{- if not $resourceSettings.disabled }}
+{{- if not $kindSettings.disabled }}
   {{- if hasKey $.Values $kind }}
     {{- range $resourceName, $resourceDefinition := get $.Values $kind }}
       {{- if (hasKey $resourceDefinition "enabled" | ternary $resourceDefinition.enabled true) }}
@@ -343,6 +433,20 @@ Correctly render values files entries which strings may contain templates
 {{- $result | toJson }}
 {{- end }}
 
+{{/*
+Build a complete resource ready for rendering
+
+Params:
+
+  name : string - Resource name as defined in the values file
+  kind : string - Resource kind
+  definition : dict - Resource definition
+  apiVersion : strint - Resource ApiVersion
+  kindCamelCase : string - Resource kind in CamelCase format
+  preprocess : bool - Whether the resource kind has a preprocessor
+
+Return: dict in json format
+*/}}
 {{- define "metachart.buildResource" }}
 {{- /* Cleanup context from the function params */}}
 {{- $params := $.params | deepCopy }}
@@ -357,22 +461,22 @@ Correctly render values files entries which strings may contain templates
 {{- /* Execution */}}
 {{- $component := (printf "%s-%s" $kind $name) }}
 {{- $relatedComponent := $definition.relatedComponent }}
-{{- $resource:= dict
+{{- $resource := dict
   "apiVersion" $apiVersion
   "kind" $kindCamelCase
 }}
 {{- $resource = merge $resource (omit ($definition | deepCopy) "enabled" "metadata" "related" "relatedComponent") }}
 {{- $_ := set $resource "metadata" (include "metachart.resourceMeta" (merge (dict "params"
   (dict
-    "resource" $definition
-    "resourceName" $name
+    "definition" $definition
+    "name" $name
     "component" $component
     "relatedComponent" $relatedComponent
   )) $context) | fromJson) }}
 {{- /* Apply defaults */}}
 {{- $resource = include "metachart.setDefaults" (merge (dict "params"
   (dict
-    "resource" $resource
+    "definition" $resource
     "kind" $kind
   )) $context) | fromJson }}
 {{- /* Preprocessing */}}
@@ -381,7 +485,7 @@ Correctly render values files entries which strings may contain templates
   {{- $preprocessor := printf "metachart.preprocess.%s" $kind }}
   {{- $preprocessed = include $preprocessor (merge (dict "params"
     (dict
-      "resource" $resource
+      "definition" $resource
       "name" $name
       "component" $component
       "relatedComponent" $relatedComponent
@@ -393,6 +497,11 @@ Correctly render values files entries which strings may contain templates
 {{- $result | toJson }}
 {{- end }}
 
+{{/*
+Render all release resources
+
+Return: yaml
+*/}}
 {{- define "metachart.renderAll" }}
 {{- /* Cleanup context from the function params */}}
 {{- $params := default dict $.params | deepCopy }}
@@ -408,6 +517,15 @@ Correctly render values files entries which strings may contain templates
 {{- $result }}
 {{- end }}
 
+{{/*
+Render specific resource kinds
+
+Params:
+
+  kinds : slice - List of kinds
+
+Return: yaml
+*/}}
 {{- define "metachart.renderKinds" }}
 {{- /* Cleanup context from the function params */}}
 {{- $params := default dict $.params | deepCopy }}
@@ -438,6 +556,15 @@ Correctly render values files entries which strings may contain templates
 {{- $result }}
 {{- end }}
 
+{{/*
+Calculate checksum of resources of specific kind
+
+Params:
+
+  kinds : slice - List of kinds
+
+Return: string
+*/}}
 {{- define "metachart.checksumKinds" }}
 {{- /* Cleanup context from the function params */}}
 {{- $params := default dict $.params | deepCopy }}
@@ -452,6 +579,16 @@ Correctly render values files entries which strings may contain templates
 {{- $result | sha256sum }}
 {{- end }}
 
+{{/*
+Render single resource
+
+Params:
+
+  name : string - Resource name as defined in the values file
+  kind : string - Resource kind
+
+Return: yaml
+*/}}
 {{- define "metachart.renderSingle" }}
 {{- /* Cleanup context from the function params */}}
 {{- $params := default dict $.params | deepCopy }}
@@ -479,6 +616,16 @@ Correctly render values files entries which strings may contain templates
 {{- $result }}
 {{- end }}
 
+{{/*
+Calculate checksum of a specific resource
+
+Params:
+
+  name : string - Resource name as defined in the values file
+  kind : string - Resource kind
+
+Return: string
+*/}}
 {{- define "metachart.checksumSingle" }}
 {{- /* Cleanup context from the function params */}}
 {{- $params := default dict $.params | deepCopy }}
