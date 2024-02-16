@@ -5,4 +5,4 @@ bin
 .coverage*
 vendor
 .idea
-dist
+dist/
