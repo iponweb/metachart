@@ -491,8 +491,10 @@ Return: dict in json format
       "relatedComponent" $relatedComponent
     )) $context) | fromJson }}
 {{- end }}
+{{- /* Resource for context */}}
+{{- $metachartAdditionalContext := dict "ResourcePreRendered" ($preprocessed | deepCopy) }}
 {{- /* Render */}}
-{{- $result := include "metachart.deepRender" (merge (dict "params" (dict "data" $preprocessed)) $) | fromJson }}
+{{- $result := include "metachart.deepRender" (merge (dict "params" (dict "data" $preprocessed) "Metachart" $metachartAdditionalContext) $) | fromJson }}
 {{- /* Return */}}
 {{- $result | toJson }}
 {{- end }}
