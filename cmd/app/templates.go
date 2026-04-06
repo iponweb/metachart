@@ -40,7 +40,7 @@ type Settings map[string]KindSettings
 func (command *GenCommand) GenTemplates(c chart.Chart) (err error) {
 	settings := Settings{}
 
-	for kind, config := range c.ResourcesConfig.Resources {
+	for kind, config := range c.Config.Spec.Resources {
 		if !config.Template {
 			continue
 		}

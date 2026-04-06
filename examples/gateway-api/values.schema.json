@@ -1,0 +1,2142 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "definitions": {
+    "io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector": {
+      "additionalProperties": false,
+      "properties": {
+        "matchExpressions": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelectorRequirement",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "matchLabels": {
+          "additionalProperties": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "object"
+        }
+      },
+      "type": "object",
+      "x-kubernetes-map-type": "atomic"
+    },
+    "io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelectorRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "default": "",
+          "type": "string"
+        },
+        "operator": {
+          "default": "",
+          "type": "string"
+        },
+        "values": {
+          "items": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        }
+      },
+      "required": [
+        "key",
+        "operator"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.AllowedListeners": {
+      "additionalProperties": false,
+      "properties": {
+        "namespaces": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.ListenerNamespaces"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.AllowedRoutes": {
+      "additionalProperties": false,
+      "properties": {
+        "kinds": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.RouteGroupKind",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "namespaces": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.RouteNamespaces"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.BackendObjectReference": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "port": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.BackendRef": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "port": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "weight": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.BackendTLSPolicySpec": {
+      "additionalProperties": false,
+      "properties": {
+        "options": {
+          "additionalProperties": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "targetRefs": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.LocalPolicyTargetReferenceWithSectionName",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "validation": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.BackendTLSPolicyValidation",
+          "default": {}
+        }
+      },
+      "required": [
+        "targetRefs",
+        "validation"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.BackendTLSPolicyValidation": {
+      "additionalProperties": false,
+      "properties": {
+        "caCertificateRefs": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.LocalObjectReference",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "hostname": {
+          "default": "",
+          "type": "string"
+        },
+        "subjectAltNames": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.SubjectAltName",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "wellKnownCACertificates": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "hostname"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.CookieConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lifetimeType": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.ForwardBodyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "maxSize": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.Fraction": {
+      "additionalProperties": false,
+      "properties": {
+        "denominator": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "numerator": {
+          "default": 0,
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "numerator"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.FrontendTLSConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "default": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.TLSConfig",
+          "default": {}
+        },
+        "perPort": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.TLSPortConfig",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-map-keys": [
+            "port"
+          ],
+          "x-kubernetes-list-type": "map"
+        }
+      },
+      "required": [
+        "default"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.FrontendTLSValidation": {
+      "additionalProperties": false,
+      "properties": {
+        "caCertificateRefs": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.ObjectReference",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "mode": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "caCertificateRefs"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.GRPCAuthConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "allowedHeaders": {
+          "items": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "set"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.GRPCBackendRef": {
+      "additionalProperties": false,
+      "properties": {
+        "filters": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.GRPCRouteFilter",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "group": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "port": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "weight": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.GRPCHeaderMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "value": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.GRPCMethodMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "service": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.GRPCRouteFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "extensionRef": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.LocalObjectReference"
+        },
+        "requestHeaderModifier": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPHeaderFilter"
+        },
+        "requestMirror": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPRequestMirrorFilter"
+        },
+        "responseHeaderModifier": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPHeaderFilter"
+        },
+        "type": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.GRPCRouteMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "headers": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.GRPCHeaderMatch",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-map-keys": [
+            "name"
+          ],
+          "x-kubernetes-list-type": "map"
+        },
+        "method": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.GRPCMethodMatch"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.GRPCRouteRule": {
+      "additionalProperties": false,
+      "properties": {
+        "backendRefs": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.GRPCBackendRef",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "filters": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.GRPCRouteFilter",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "matches": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.GRPCRouteMatch",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "name": {
+          "type": "string"
+        },
+        "sessionPersistence": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.SessionPersistence"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.GRPCRouteSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "hostnames": {
+          "items": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "parentRefs": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.ParentReference",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.GRPCRouteRule",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "useDefaultGateways": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.GatewayBackendTLS": {
+      "additionalProperties": false,
+      "properties": {
+        "clientCertificateRef": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.SecretObjectReference"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.GatewayClassSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "controllerName": {
+          "default": "",
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "parametersRef": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.ParametersReference"
+        }
+      },
+      "required": [
+        "controllerName"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.GatewayInfrastructure": {
+      "additionalProperties": false,
+      "properties": {
+        "annotations": {
+          "additionalProperties": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "labels": {
+          "additionalProperties": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "parametersRef": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.LocalParametersReference"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.GatewaySpec": {
+      "additionalProperties": false,
+      "properties": {
+        "addresses": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.GatewaySpecAddress",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "allowedListeners": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.AllowedListeners"
+        },
+        "defaultScope": {
+          "type": "string"
+        },
+        "gatewayClassName": {
+          "default": "",
+          "type": "string"
+        },
+        "infrastructure": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.GatewayInfrastructure"
+        },
+        "listeners": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.Listener",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-map-keys": [
+            "name"
+          ],
+          "x-kubernetes-list-type": "map"
+        },
+        "tls": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.GatewayTLSConfig"
+        }
+      },
+      "required": [
+        "gatewayClassName",
+        "listeners"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.GatewaySpecAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.GatewayTLSConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "backend": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.GatewayBackendTLS"
+        },
+        "frontend": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.FrontendTLSConfig"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPAuthConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "allowedHeaders": {
+          "items": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "set"
+        },
+        "allowedResponseHeaders": {
+          "items": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "set"
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPBackendRef": {
+      "additionalProperties": false,
+      "properties": {
+        "filters": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPRouteFilter",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "group": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "port": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "weight": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPCORSFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "allowCredentials": {
+          "type": "boolean"
+        },
+        "allowHeaders": {
+          "items": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "set"
+        },
+        "allowMethods": {
+          "items": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "set"
+        },
+        "allowOrigins": {
+          "items": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "set"
+        },
+        "exposeHeaders": {
+          "items": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "set"
+        },
+        "maxAge": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPExternalAuthFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "backendRef": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.BackendObjectReference",
+          "default": {}
+        },
+        "forwardBody": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.ForwardBodyConfig"
+        },
+        "grpc": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.GRPCAuthConfig"
+        },
+        "http": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPAuthConfig"
+        },
+        "protocol": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "protocol",
+        "backendRef"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPHeader": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "value": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPHeaderFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "add": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPHeader",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-map-keys": [
+            "name"
+          ],
+          "x-kubernetes-list-type": "map"
+        },
+        "remove": {
+          "items": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "set"
+        },
+        "set": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPHeader",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-map-keys": [
+            "name"
+          ],
+          "x-kubernetes-list-type": "map"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPHeaderMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "value": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPPathMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPPathModifier": {
+      "additionalProperties": false,
+      "properties": {
+        "replaceFullPath": {
+          "type": "string"
+        },
+        "replacePrefixMatch": {
+          "type": "string"
+        },
+        "type": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPQueryParamMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "value": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPRequestMirrorFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "backendRef": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.BackendObjectReference",
+          "default": {}
+        },
+        "fraction": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.Fraction"
+        },
+        "percent": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "backendRef"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPRequestRedirectFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "hostname": {
+          "type": "string"
+        },
+        "path": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPPathModifier"
+        },
+        "port": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "scheme": {
+          "type": "string"
+        },
+        "statusCode": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPRouteFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "cors": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPCORSFilter"
+        },
+        "extensionRef": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.LocalObjectReference"
+        },
+        "externalAuth": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPExternalAuthFilter"
+        },
+        "requestHeaderModifier": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPHeaderFilter"
+        },
+        "requestMirror": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPRequestMirrorFilter"
+        },
+        "requestRedirect": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPRequestRedirectFilter"
+        },
+        "responseHeaderModifier": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPHeaderFilter"
+        },
+        "type": {
+          "default": "",
+          "type": "string"
+        },
+        "urlRewrite": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPURLRewriteFilter"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPRouteMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "headers": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPHeaderMatch",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-map-keys": [
+            "name"
+          ],
+          "x-kubernetes-list-type": "map"
+        },
+        "method": {
+          "type": "string"
+        },
+        "path": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPPathMatch"
+        },
+        "queryParams": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPQueryParamMatch",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-map-keys": [
+            "name"
+          ],
+          "x-kubernetes-list-type": "map"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPRouteRetry": {
+      "additionalProperties": false,
+      "properties": {
+        "attempts": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "backoff": {
+          "type": "string"
+        },
+        "codes": {
+          "items": {
+            "default": 0,
+            "format": "int32",
+            "type": "integer"
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPRouteRule": {
+      "additionalProperties": false,
+      "properties": {
+        "backendRefs": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPBackendRef",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "filters": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPRouteFilter",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "matches": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPRouteMatch",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "name": {
+          "type": "string"
+        },
+        "retry": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPRouteRetry"
+        },
+        "sessionPersistence": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.SessionPersistence"
+        },
+        "timeouts": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPRouteTimeouts"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPRouteSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "hostnames": {
+          "items": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "parentRefs": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.ParentReference",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPRouteRule",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "useDefaultGateways": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPRouteTimeouts": {
+      "additionalProperties": false,
+      "properties": {
+        "backendRequest": {
+          "type": "string"
+        },
+        "request": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.HTTPURLRewriteFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "hostname": {
+          "type": "string"
+        },
+        "path": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPPathModifier"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.Listener": {
+      "additionalProperties": false,
+      "properties": {
+        "allowedRoutes": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.AllowedRoutes"
+        },
+        "hostname": {
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "port": {
+          "default": 0,
+          "format": "int32",
+          "type": "integer"
+        },
+        "protocol": {
+          "default": "",
+          "type": "string"
+        },
+        "tls": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.ListenerTLSConfig"
+        }
+      },
+      "required": [
+        "name",
+        "port",
+        "protocol"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.ListenerEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "allowedRoutes": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.AllowedRoutes"
+        },
+        "hostname": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "port": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "protocol": {
+          "type": "string"
+        },
+        "tls": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.ListenerTLSConfig"
+        }
+      },
+      "required": [
+        "name",
+        "port",
+        "protocol"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.ListenerNamespaces": {
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "selector": {
+          "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.ListenerSetSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "listeners": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.ListenerEntry",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-map-keys": [
+            "name"
+          ],
+          "x-kubernetes-list-type": "map"
+        },
+        "parentRef": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.ParentGatewayReference",
+          "default": {}
+        }
+      },
+      "required": [
+        "parentRef",
+        "listeners"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.ListenerTLSConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "certificateRefs": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.SecretObjectReference",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "options": {
+          "additionalProperties": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.LocalObjectReference": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "default": "",
+          "type": "string"
+        },
+        "kind": {
+          "default": "",
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group",
+        "kind",
+        "name"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.LocalParametersReference": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "default": "",
+          "type": "string"
+        },
+        "kind": {
+          "default": "",
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group",
+        "kind",
+        "name"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.LocalPolicyTargetReferenceWithSectionName": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "default": "",
+          "type": "string"
+        },
+        "kind": {
+          "default": "",
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "sectionName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "group",
+        "kind",
+        "name"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.ObjectReference": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "default": "",
+          "type": "string"
+        },
+        "kind": {
+          "default": "",
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "group",
+        "kind",
+        "name"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.ParametersReference": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "default": "",
+          "type": "string"
+        },
+        "kind": {
+          "default": "",
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "group",
+        "kind",
+        "name"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.ParentGatewayReference": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.ParentReference": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "port": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "sectionName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.ReferenceGrantFrom": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "default": "",
+          "type": "string"
+        },
+        "kind": {
+          "default": "",
+          "type": "string"
+        },
+        "namespace": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group",
+        "kind",
+        "namespace"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.ReferenceGrantSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.ReferenceGrantFrom",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "to": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.ReferenceGrantTo",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        }
+      },
+      "required": [
+        "from",
+        "to"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.ReferenceGrantTo": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "default": "",
+          "type": "string"
+        },
+        "kind": {
+          "default": "",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "group",
+        "kind"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.RouteGroupKind": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "type": "string"
+        },
+        "kind": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.RouteNamespaces": {
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "selector": {
+          "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.SecretObjectReference": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.SessionPersistence": {
+      "additionalProperties": false,
+      "properties": {
+        "absoluteTimeout": {
+          "type": "string"
+        },
+        "cookieConfig": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.CookieConfig"
+        },
+        "idleTimeout": {
+          "type": "string"
+        },
+        "sessionName": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.SubjectAltName": {
+      "additionalProperties": false,
+      "properties": {
+        "hostname": {
+          "type": "string"
+        },
+        "type": {
+          "default": "",
+          "type": "string"
+        },
+        "uri": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.TLSConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "validation": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.FrontendTLSValidation"
+        }
+      },
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.TLSPortConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "port": {
+          "default": 0,
+          "format": "int32",
+          "type": "integer"
+        },
+        "tls": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.TLSConfig",
+          "default": {}
+        }
+      },
+      "required": [
+        "port",
+        "tls"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.TLSRouteRule": {
+      "additionalProperties": false,
+      "properties": {
+        "backendRefs": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.BackendRef",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "backendRefs"
+      ],
+      "type": "object"
+    },
+    "io.k8s.networking.gateway.v1.TLSRouteSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "hostnames": {
+          "items": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "parentRefs": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.ParentReference",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/definitions/io.k8s.networking.gateway.v1.TLSRouteRule",
+            "default": {}
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
+        "useDefaultGateways": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "hostnames",
+        "rules"
+      ],
+      "type": "object"
+    },
+    "metachart.api.io.k8s.networking.gateway.v1.BackendTLSPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "$ref": "#/definitions/metachart.interface.boolean"
+        },
+        "metadata": {
+          "$ref": "#/definitions/metachart.api.meta.v1.ObjectMeta"
+        },
+        "spec": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.BackendTLSPolicySpec",
+          "default": {}
+        }
+      },
+      "required": [
+        "spec"
+      ],
+      "type": "object",
+      "x-kubernetes-group-version-kind": [
+        {
+          "group": "gateway.networking.k8s.io",
+          "kind": "BackendTLSPolicy",
+          "version": "v1"
+        }
+      ]
+    },
+    "metachart.api.io.k8s.networking.gateway.v1.GRPCRoute": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "$ref": "#/definitions/metachart.interface.boolean"
+        },
+        "metadata": {
+          "$ref": "#/definitions/metachart.api.meta.v1.ObjectMeta"
+        },
+        "spec": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.GRPCRouteSpec",
+          "default": {}
+        }
+      },
+      "required": [
+        "spec"
+      ],
+      "type": "object",
+      "x-kubernetes-group-version-kind": [
+        {
+          "group": "gateway.networking.k8s.io",
+          "kind": "GRPCRoute",
+          "version": "v1"
+        }
+      ]
+    },
+    "metachart.api.io.k8s.networking.gateway.v1.Gateway": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "$ref": "#/definitions/metachart.interface.boolean"
+        },
+        "metadata": {
+          "$ref": "#/definitions/metachart.api.meta.v1.ObjectMeta"
+        },
+        "spec": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.GatewaySpec",
+          "default": {}
+        }
+      },
+      "required": [
+        "spec"
+      ],
+      "type": "object",
+      "x-kubernetes-group-version-kind": [
+        {
+          "group": "gateway.networking.k8s.io",
+          "kind": "Gateway",
+          "version": "v1"
+        }
+      ]
+    },
+    "metachart.api.io.k8s.networking.gateway.v1.GatewayClass": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "$ref": "#/definitions/metachart.interface.boolean"
+        },
+        "metadata": {
+          "$ref": "#/definitions/metachart.api.meta.v1.ObjectMeta"
+        },
+        "spec": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.GatewayClassSpec",
+          "default": {}
+        }
+      },
+      "required": [
+        "spec"
+      ],
+      "type": "object",
+      "x-kubernetes-group-version-kind": [
+        {
+          "group": "gateway.networking.k8s.io",
+          "kind": "GatewayClass",
+          "version": "v1"
+        }
+      ]
+    },
+    "metachart.api.io.k8s.networking.gateway.v1.HTTPRoute": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "$ref": "#/definitions/metachart.interface.boolean"
+        },
+        "metadata": {
+          "$ref": "#/definitions/metachart.api.meta.v1.ObjectMeta"
+        },
+        "spec": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.HTTPRouteSpec",
+          "default": {}
+        }
+      },
+      "required": [
+        "spec"
+      ],
+      "type": "object",
+      "x-kubernetes-group-version-kind": [
+        {
+          "group": "gateway.networking.k8s.io",
+          "kind": "HTTPRoute",
+          "version": "v1"
+        }
+      ]
+    },
+    "metachart.api.io.k8s.networking.gateway.v1.ListenerSet": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "$ref": "#/definitions/metachart.interface.boolean"
+        },
+        "metadata": {
+          "$ref": "#/definitions/metachart.api.meta.v1.ObjectMeta"
+        },
+        "spec": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.ListenerSetSpec",
+          "default": {}
+        }
+      },
+      "required": [
+        "spec"
+      ],
+      "type": "object",
+      "x-kubernetes-group-version-kind": [
+        {
+          "group": "gateway.networking.k8s.io",
+          "kind": "ListenerSet",
+          "version": "v1"
+        }
+      ]
+    },
+    "metachart.api.io.k8s.networking.gateway.v1.ReferenceGrant": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "$ref": "#/definitions/metachart.interface.boolean"
+        },
+        "metadata": {
+          "$ref": "#/definitions/metachart.api.meta.v1.ObjectMeta"
+        },
+        "spec": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.ReferenceGrantSpec",
+          "default": {}
+        }
+      },
+      "type": "object",
+      "x-kubernetes-group-version-kind": [
+        {
+          "group": "gateway.networking.k8s.io",
+          "kind": "ReferenceGrant",
+          "version": "v1"
+        }
+      ]
+    },
+    "metachart.api.io.k8s.networking.gateway.v1.TLSRoute": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "$ref": "#/definitions/metachart.interface.boolean"
+        },
+        "metadata": {
+          "$ref": "#/definitions/metachart.api.meta.v1.ObjectMeta"
+        },
+        "spec": {
+          "$ref": "#/definitions/io.k8s.networking.gateway.v1.TLSRouteSpec",
+          "default": {}
+        }
+      },
+      "required": [
+        "spec"
+      ],
+      "type": "object",
+      "x-kubernetes-group-version-kind": [
+        {
+          "group": "gateway.networking.k8s.io",
+          "kind": "TLSRoute",
+          "version": "v1"
+        }
+      ]
+    },
+    "metachart.api.meta.v1.ObjectMeta": {
+      "additionalProperties": false,
+      "properties": {
+        "annotations": {
+          "additionalProperties": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "checksums": {
+          "$ref": "#/definitions/metachart.interface.checksums"
+        },
+        "finalizers": {
+          "items": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "set",
+          "x-kubernetes-patch-strategy": "merge"
+        },
+        "labels": {
+          "additionalProperties": {
+            "default": "",
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "metachart.interface.FQDNitem": {
+      "pattern": "^[a-z][0-9a-z]*(-[0-9a-z]+)*$",
+      "type": "string"
+    },
+    "metachart.interface.boolean": {
+      "type": "boolean"
+    },
+    "metachart.interface.checksumEntryList": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/definitions/metachart.interface.FQDNitem"
+          },
+          "type": "array"
+        },
+        {
+          "enum": [
+            "*"
+          ]
+        }
+      ]
+    },
+    "metachart.interface.checksums": {
+      "properties": {
+        "backendtlspolicies": {
+          "$ref": "#/definitions/metachart.interface.checksumEntryList"
+        },
+        "gatewayclasses": {
+          "$ref": "#/definitions/metachart.interface.checksumEntryList"
+        },
+        "gateways": {
+          "$ref": "#/definitions/metachart.interface.checksumEntryList"
+        },
+        "grpcroutes": {
+          "$ref": "#/definitions/metachart.interface.checksumEntryList"
+        },
+        "httproutes": {
+          "$ref": "#/definitions/metachart.interface.checksumEntryList"
+        },
+        "listenersets": {
+          "$ref": "#/definitions/metachart.interface.checksumEntryList"
+        },
+        "referencegrants": {
+          "$ref": "#/definitions/metachart.interface.checksumEntryList"
+        },
+        "tlsroutes": {
+          "$ref": "#/definitions/metachart.interface.checksumEntryList"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "properties": {
+    "backendtlspolicies": {
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z][0-9a-z]*(-[0-9a-z]+)*$": {
+          "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.BackendTLSPolicy"
+        }
+      },
+      "type": "object"
+    },
+    "context": {
+      "description": "Any content which can be used for config rendering without schema defined by the chart",
+      "type": "object"
+    },
+    "fullnameOverride": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/metachart.interface.FQDNitem"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "gatewayclasses": {
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z][0-9a-z]*(-[0-9a-z]+)*$": {
+          "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.GatewayClass"
+        }
+      },
+      "type": "object"
+    },
+    "gateways": {
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z][0-9a-z]*(-[0-9a-z]+)*$": {
+          "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.Gateway"
+        }
+      },
+      "type": "object"
+    },
+    "grpcroutes": {
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z][0-9a-z]*(-[0-9a-z]+)*$": {
+          "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.GRPCRoute"
+        }
+      },
+      "type": "object"
+    },
+    "httproutes": {
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z][0-9a-z]*(-[0-9a-z]+)*$": {
+          "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.HTTPRoute"
+        }
+      },
+      "type": "object"
+    },
+    "listenersets": {
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z][0-9a-z]*(-[0-9a-z]+)*$": {
+          "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.ListenerSet"
+        }
+      },
+      "type": "object"
+    },
+    "referencegrants": {
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z][0-9a-z]*(-[0-9a-z]+)*$": {
+          "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.ReferenceGrant"
+        }
+      },
+      "type": "object"
+    },
+    "settings": {
+      "additionalProperties": false,
+      "properties": {
+        "backendtlspolicies": {
+          "properties": {
+            "defaults": {
+              "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.BackendTLSPolicy"
+            },
+            "disabled": {
+              "description": "Disable all resources of this kind",
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "gatewayclasses": {
+          "properties": {
+            "defaults": {
+              "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.GatewayClass"
+            },
+            "disabled": {
+              "description": "Disable all resources of this kind",
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "gateways": {
+          "properties": {
+            "defaults": {
+              "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.Gateway"
+            },
+            "disabled": {
+              "description": "Disable all resources of this kind",
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "global": {
+          "additionalProperties": false,
+          "properties": {
+            "annotations": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "labels": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "grpcroutes": {
+          "properties": {
+            "defaults": {
+              "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.GRPCRoute"
+            },
+            "disabled": {
+              "description": "Disable all resources of this kind",
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "httproutes": {
+          "properties": {
+            "defaults": {
+              "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.HTTPRoute"
+            },
+            "disabled": {
+              "description": "Disable all resources of this kind",
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "listenersets": {
+          "properties": {
+            "defaults": {
+              "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.ListenerSet"
+            },
+            "disabled": {
+              "description": "Disable all resources of this kind",
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "referencegrants": {
+          "properties": {
+            "defaults": {
+              "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.ReferenceGrant"
+            },
+            "disabled": {
+              "description": "Disable all resources of this kind",
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "tlsroutes": {
+          "properties": {
+            "defaults": {
+              "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.TLSRoute"
+            },
+            "disabled": {
+              "description": "Disable all resources of this kind",
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "tlsroutes": {
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z][0-9a-z]*(-[0-9a-z]+)*$": {
+          "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.TLSRoute"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

@@ -8,6 +8,10 @@ deployments:
   apiVersion: apps/v1
   kindCamelCase: Deployment
   preprocess: true
+pods:
+  apiVersion: v1
+  kindCamelCase: Pod
+  preprocess: false
 services:
   apiVersion: v1
   kindCamelCase: Service

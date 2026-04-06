@@ -14,4 +14,5 @@ A set of resources supported by the chart
 | Values file key | Kind | Preprocessor |
 | --------------- | ---- | ------------ |
 | configmaps   | ConfigMap | - |
+| pods   | Pod | - |
 | services   | Service | [link](templates/preprocess/_services.tpl) |

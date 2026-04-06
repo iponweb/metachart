@@ -52,6 +52,11 @@ func (command *GenCommand) Execute(_ *cobra.Command, args []string) (err error) 
 		return err
 	}
 
+	err = c.Autodiscover()
+	if err != nil {
+		return err
+	}
+
 	err = c.CleanupTemplates()
 	if err != nil {
 		return err

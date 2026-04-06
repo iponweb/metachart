@@ -33,7 +33,12 @@ const (
 	schemaFile      = "file"
 	schemaGitlabApi = "gitlab-api"
 
-	envVariableGitlabApiToken = "METACHART_GITLAB_API_TOKEN"
+	envVariableGitlabApiToken     = "METACHART_GITLAB_API_TOKEN"
+	envVariableGitlabApiTokenType = "METACHART_GITLAB_API_TOKEN_TYPE"
+
+	gitlabTokenTypePrivate = "private"
+	gitlabTokenTypeOAuth   = "oauth"
+	gitlabTokenTypeJob     = "job"
 )
 
 func (p *FilePath) Read() ([]byte, error) {
@@ -85,8 +90,18 @@ func (p *FilePath) ReadGitlabApi() ([]byte, error) {
 		return nil, fmt.Errorf("can not get gitlab api token")
 	}
 
-	client, err := gitlab.NewClient(
-		token, gitlab.WithBaseURL(fmt.Sprintf("https://%s/api/v4", parsed.Hostname)))
+	tokenType := os.Getenv(envVariableGitlabApiTokenType)
+
+	var client *gitlab.Client
+	baseURL := gitlab.WithBaseURL(fmt.Sprintf("https://%s/api/v4", parsed.Hostname))
+	switch tokenType {
+	case gitlabTokenTypeOAuth:
+		client, err = gitlab.NewOAuthClient(token, baseURL)
+	case gitlabTokenTypeJob:
+		client, err = gitlab.NewJobClient(token, baseURL)
+	default:
+		client, err = gitlab.NewClient(token, baseURL)
+	}
 	if err != nil {
 		return nil, err
 	}

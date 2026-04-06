@@ -12,19 +12,19 @@
   (dict
     "component" $component
   )) $context) | fromJson) ) }}
-{{- /* Read template definition */}}
-{{- $template := get $definition.spec "template" | deepCopy }}
-{{- $_ = unset $definition.spec "template" }}
+{{- /* Read pod definition */}}
+{{- $pod := $definition.spec.pod | deepCopy }}
+{{- $_ = unset $definition.spec "pod" }}
 {{- /* Apply metadata */}}
-{{- $_ = set $template "metadata" (include "metachart.resourceMeta" (merge (dict "params"
+{{- $_ = set $pod "metadata" (include "metachart.resourceMeta" (merge (dict "params"
   (dict
-    "definition" $template
+    "definition" $pod
     "name" $name
     "component" $component
     "withName" false
   )) $context) | fromJson) }}
 {{- /* Set spec.template */}}
-{{- $_ = set $definition.spec "template" $template }}
+{{- $_ = set $definition.spec "template" $pod }}
 {{- /* Return */}}
 {{- $definition | toJson }}
 {{- end }}

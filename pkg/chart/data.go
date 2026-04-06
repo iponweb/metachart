@@ -28,11 +28,8 @@ var (
 	//go:embed resources/init/values.yaml
 	valuesYamlBody string
 
-	//go:embed resources/init/config/resources.yaml
-	configResourcesYamlBody string
-
-	//go:embed resources/init/config/schema.yaml
-	configSchemaYamlBody string
+	//go:embed resources/init/config/config.yaml
+	configYamlBody string
 
 	//go:embed resources/init/config/values.schema.custom.json
 	configValuesSchemaCustomJsonBody string
@@ -50,8 +47,7 @@ var (
 		helmignorePath:                   helmignoreBody,
 		chartYamlPath:                    chartYamlBody,
 		valuesYamlPath:                   valuesYamlBody,
-		configResourcesYamlPath:          configResourcesYamlBody,
-		configSchemaYamlPath:             configSchemaYamlBody,
+		configYamlPath:                   configYamlBody,
 		configValuesSchemaCustomJsonPath: configValuesSchemaCustomJsonBody,
 		templatesCustomTplPath:           templatesCustomTplBody,
 		templatesMetachartTplPath:        templatesMetachartTplBody,
