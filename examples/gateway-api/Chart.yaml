@@ -1,0 +1,6 @@
+apiVersion: v2
+name: gateway-api
+description: Metachart-generated Helm Chart for Kubernetes Gateway API resources
+type: application
+version: "0.0.1"
+appVersion: none

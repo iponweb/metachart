@@ -24,7 +24,7 @@ deployments:
       labels:
         resource-label: resource-label-value
     spec:
-      template:
+      pod:
         metadata:
           checksums:
             #: Restart Deployment pods on the `main` configmap change
@@ -52,7 +52,7 @@ settings:
   deployments:
     defaults:
       spec:
-        template:
+        pod:
           metadata:
             #: By default - restart on any configmaps change
             checksums:

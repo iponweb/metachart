@@ -1,0 +1,72 @@
+apiVersion: metachart.iponweb.net/v1alpha1
+kind: MetachartConfig
+metadata:
+  name: demo
+spec:
+  schema:
+    rules:
+      #: meta.v1.ObjectMeta — common metadata used by all resources
+      - target: metachart.api.meta.v1.ObjectMeta
+        source: io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
+        allowed:
+          - annotations
+          - labels
+          - finalizers
+          - namespace
+          - name
+        properties:
+          checksums: metachart.interface.checksums
+
+      #: v1 — PodSpec (intermediate type)
+      - target: metachart.api.io.k8s.api.core.v1.PodSpec
+        source: io.k8s.api.core.v1.PodSpec
+        properties:
+          metadata: metachart.api.meta.v1.ObjectMeta
+
+      #: apps/v1 — DeploymentSpec (intermediate type)
+      - target: metachart.api.io.k8s.api.apps.v1.DeploymentSpec
+        source: io.k8s.api.apps.v1.DeploymentSpec
+        disallowed:
+          - template
+          - selector
+        properties:
+          pod: metachart.api.io.k8s.api.core.v1.Pod
+        required:
+          - pod
+
+  autodiscover:
+    #: Named API groups — only Deployment is used in this demo
+    #: definitionsLast: CRD bundles often embed stale copies of core Kubernetes
+    #: types (e.g. ObjectMeta, PodSpec). Setting definitionsLast ensures the
+    #: authoritative Kubernetes definitions overwrite those copies.
+    - version: "v1.35.3"
+      definitionsLast: true
+      discovery: "https://raw.githubusercontent.com/iponweb/schemas/refs/heads/main/schemas/kubernetes/kubernetes/{{ .version }}/discovery/apis.json"
+      definitions: "https://raw.githubusercontent.com/iponweb/schemas/refs/heads/main/schemas/kubernetes/kubernetes/{{ .version }}/json-schema/source/_definitions.json"
+      include:
+        - apiVersion: "apps/v1"
+          kind:
+            - Deployment
+          properties:
+            spec: metachart.api.io.k8s.api.apps.v1.DeploymentSpec
+          related:
+            - plural:
+                - services
+
+    #: Core API group (v1) — served at /api/v1, not included in apis.json
+    #: definitionsLast: same _definitions.json as above; deduplicated, flag
+    #: kept here for clarity.
+    - version: "v1.35.3"
+      definitionsLast: true
+      discovery: "https://raw.githubusercontent.com/iponweb/schemas/refs/heads/main/schemas/kubernetes/kubernetes/{{ .version }}/discovery/api__v1.json"
+      definitions: "https://raw.githubusercontent.com/iponweb/schemas/refs/heads/main/schemas/kubernetes/kubernetes/{{ .version }}/json-schema/source/_definitions.json"
+      include:
+        - apiVersion: "v1"
+          kind:
+            - ConfigMap
+            - Service
+        - apiVersion: "v1"
+          kind:
+            - Pod
+          properties:
+            spec: metachart.api.io.k8s.api.core.v1.PodSpec

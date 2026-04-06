@@ -50,7 +50,7 @@ func (command *GenCommand) GenDocs(c chart.Chart) (err error) {
 
 	ctx := map[string][]map[string]interface{}{}
 
-	for kind, definition := range c.ResourcesConfig.Resources {
+	for kind, definition := range c.Config.Spec.Resources {
 		if !definition.Root {
 			continue
 		}

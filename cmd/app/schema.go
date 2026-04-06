@@ -189,7 +189,7 @@ func (command *GenCommand) GenSchema(c chart.Chart) error {
 		}
 	}
 
-	for _, rule := range c.SchemaConfig.Rules {
+	for _, rule := range c.Config.Spec.Schema.Rules {
 		var definition map[string]interface{}
 
 		//: Get property definition by source or build empty
@@ -310,7 +310,7 @@ func (command *GenCommand) GenSchema(c chart.Chart) error {
 	}
 
 	//: Kinds
-	for kind, definition := range c.ResourcesConfig.Resources {
+	for kind, definition := range c.Config.Spec.Resources {
 		if definition.Root {
 			schema.Properties[kind] = GenRootKeyProperty(definition.JsonSchemaRef)
 		}
@@ -329,7 +329,7 @@ func (command *GenCommand) GenSchema(c chart.Chart) error {
 		settings["properties"] = settingsProperties
 	}
 
-	for kind, definition := range c.ResourcesConfig.Resources {
+	for kind, definition := range c.Config.Spec.Resources {
 		if !(definition.Root || definition.Defaults) {
 			continue
 		}
@@ -363,7 +363,7 @@ func (command *GenCommand) GenSchema(c chart.Chart) error {
 	checksumsProperties := map[string]interface{}{}
 	checksums["properties"] = checksumsProperties
 
-	for kind, definition := range c.ResourcesConfig.Resources {
+	for kind, definition := range c.Config.Spec.Resources {
 		if !definition.Root {
 			continue
 		}
