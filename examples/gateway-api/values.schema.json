@@ -1639,6 +1639,9 @@
     "metachart.api.io.k8s.networking.gateway.v1.BackendTLSPolicy": {
       "additionalProperties": false,
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -1665,6 +1668,9 @@
     "metachart.api.io.k8s.networking.gateway.v1.GRPCRoute": {
       "additionalProperties": false,
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -1691,6 +1697,9 @@
     "metachart.api.io.k8s.networking.gateway.v1.Gateway": {
       "additionalProperties": false,
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -1717,6 +1726,9 @@
     "metachart.api.io.k8s.networking.gateway.v1.GatewayClass": {
       "additionalProperties": false,
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -1743,6 +1755,9 @@
     "metachart.api.io.k8s.networking.gateway.v1.HTTPRoute": {
       "additionalProperties": false,
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -1769,6 +1784,9 @@
     "metachart.api.io.k8s.networking.gateway.v1.ListenerSet": {
       "additionalProperties": false,
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -1795,6 +1813,9 @@
     "metachart.api.io.k8s.networking.gateway.v1.ReferenceGrant": {
       "additionalProperties": false,
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -1818,6 +1839,9 @@
     "metachart.api.io.k8s.networking.gateway.v1.TLSRoute": {
       "additionalProperties": false,
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -1935,6 +1959,9 @@
           "$ref": "#/definitions/metachart.interface.checksumEntryList"
         }
       },
+      "type": "object"
+    },
+    "metachart.interface.context": {
       "type": "object"
     }
   },

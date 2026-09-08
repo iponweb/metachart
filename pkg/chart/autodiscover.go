@@ -344,6 +344,7 @@ func processAutodiscoverSource(src AutodiscoverSource) (discoverResult, error) {
 			// and merge its properties on top (selector properties win).
 			props := map[string]string{
 				"enabled":  "metachart.interface.boolean",
+				"context":  "metachart.interface.context",
 				"metadata": "metachart.api.meta.v1.ObjectMeta",
 			}
 			var matchedInclude *ResourceSelector

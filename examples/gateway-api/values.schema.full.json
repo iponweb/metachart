@@ -1910,6 +1910,9 @@
       "additionalProperties": false,
       "description": "BackendTLSPolicy provides a way to configure how a Gateway connects to a Backend via TLS.",
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -1938,6 +1941,9 @@
       "additionalProperties": false,
       "description": "GRPCRoute provides a way to route gRPC requests. This includes the capability to match requests by hostname, gRPC service, gRPC method, or HTTP/2 header. Filters can be used to specify additional processing steps. Backends specify where matching requests will be routed.\n\nGRPCRoute falls under extended support within the Gateway API. Within the following specification, the word \"MUST\" indicates that an implementation supporting GRPCRoute must conform to the indicated requirement, but an implementation not supporting this route type need not follow the requirement unless explicitly indicated.\n\nImplementations supporting `GRPCRoute` with the `HTTPS` `ProtocolType` MUST accept HTTP/2 connections without an initial upgrade from HTTP/1.1, i.e. via ALPN. If the implementation does not support this, then it MUST set the \"Accepted\" condition to \"False\" for the affected listener with a reason of \"UnsupportedProtocol\".  Implementations MAY also accept HTTP/2 connections with an upgrade from HTTP/1.\n\nImplementations supporting `GRPCRoute` with the `HTTP` `ProtocolType` MUST support HTTP/2 over cleartext TCP (h2c, https://www.rfc-editor.org/rfc/rfc7540#section-3.1) without an initial upgrade from HTTP/1.1, i.e. with prior knowledge (https://www.rfc-editor.org/rfc/rfc7540#section-3.4). If the implementation does not support this, then it MUST set the \"Accepted\" condition to \"False\" for the affected listener with a reason of \"UnsupportedProtocol\". Implementations MAY also accept HTTP/2 connections with an upgrade from HTTP/1, i.e. without prior knowledge.",
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -1966,6 +1972,9 @@
       "additionalProperties": false,
       "description": "Gateway represents an instance of a service-traffic handling infrastructure by binding Listeners to a set of IP addresses.",
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -1994,6 +2003,9 @@
       "additionalProperties": false,
       "description": "GatewayClass describes a class of Gateways available to the user for creating Gateway resources.\n\nIt is recommended that this resource be used as a template for Gateways. This means that a Gateway is based on the state of the GatewayClass at the time it was created and changes to the GatewayClass or associated parameters are not propagated down to existing Gateways. This recommendation is intended to limit the blast radius of changes to GatewayClass or associated parameters. If implementations choose to propagate GatewayClass changes to existing Gateways, that MUST be clearly documented by the implementation.\n\nWhenever one or more Gateways are using a GatewayClass, implementations SHOULD add the `gateway-exists-finalizer.gateway.networking.k8s.io` finalizer on the associated GatewayClass. This ensures that a GatewayClass associated with a Gateway is not deleted while in use.\n\nGatewayClass is a Cluster level resource.",
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -2022,6 +2034,9 @@
       "additionalProperties": false,
       "description": "HTTPRoute provides a way to route HTTP requests. This includes the capability to match requests by hostname, path, header, or query param. Filters can be used to specify additional processing steps. Backends specify where matching requests should be routed.",
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -2050,6 +2065,9 @@
       "additionalProperties": false,
       "description": "ListenerSet defines a set of additional listeners to attach to an existing Gateway. This resource provides a mechanism to merge multiple listeners into a single Gateway.\n\nThe parent Gateway must explicitly allow ListenerSet attachment through its AllowedListeners configuration. By default, Gateways do not allow ListenerSet attachment.\n\nRoutes can attach to a ListenerSet by specifying it as a parentRef, and can optionally target specific listeners using the sectionName field.\n\nPolicy Attachment: - Policies that attach to a ListenerSet apply to all listeners defined in that resource - Policies do not impact listeners in the parent Gateway - Different ListenerSets attached to the same Gateway can have different policies - If an implementation cannot apply a policy to specific listeners, it should reject the policy\n\nReferenceGrant Semantics: - ReferenceGrants applied to a Gateway are not inherited by child ListenerSets - ReferenceGrants applied to a ListenerSet do not grant permission to the parent Gateway's listeners - A ListenerSet can reference secrets/backends in its own namespace without a ReferenceGrant\n\nGateway Integration:\n  - The parent Gateway's status will include \"AttachedListenerSets\"\n    which is the count of ListenerSets that have successfully attached to a Gateway\n    A ListenerSet is successfully attached to a Gateway when all the following conditions are met:\n  - The ListenerSet is selected by the Gateway's AllowedListeners field\n  - The ListenerSet has a valid ParentRef selecting the Gateway\n  - The ListenerSet's status has the condition \"Accepted: true\"",
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -2078,6 +2096,9 @@
       "additionalProperties": false,
       "description": "ReferenceGrant identifies kinds of resources in other namespaces that are trusted to reference the specified kinds of resources in the same namespace as the policy.\n\nEach ReferenceGrant can be used to represent a unique trust relationship. Additional Reference Grants can be used to add to the set of trusted sources of inbound references for the namespace they are defined within.\n\nAll cross-namespace references in Gateway API (with the exception of cross-namespace Gateway-route attachment) require a ReferenceGrant.\n\nReferenceGrant is a form of runtime verification allowing users to assert which cross-namespace object references are permitted. Implementations that support ReferenceGrant MUST NOT permit cross-namespace references which have no grant, and MUST respond to the removal of a grant by revoking the access that the grant allowed.",
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -2103,6 +2124,9 @@
       "additionalProperties": false,
       "description": "The TLSRoute resource is similar to TCPRoute, but can be configured to match against TLS-specific metadata. This allows more flexibility in matching streams for a given TLS listener.\n\nIf you need to forward traffic to a single target for a TLS listener, you could choose to use a TCPRoute with a TLS listener.",
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -2228,6 +2252,10 @@
           "$ref": "#/definitions/metachart.interface.checksumEntryList"
         }
       },
+      "type": "object"
+    },
+    "metachart.interface.context": {
+      "description": "Facts about the resource, free form. Merged with `settings.\u003ckind\u003e.defaults.context` and exposed to the preprocessors and to every template of the resource as `$.Metachart.Resource.context`; never rendered into the object",
       "type": "object"
     }
   },

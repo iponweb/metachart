@@ -47,4 +47,9 @@ kind:
 
     # related feature settings
     related: {}
+
+    # context holds free form facts about the resource, merged with
+    # settings.kind.defaults.context and exposed to templates as
+    # $.Metachart.Resource.context; not rendered into the object
+    context: {}
 ```

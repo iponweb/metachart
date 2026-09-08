@@ -132,7 +132,7 @@ Supports fetching JSON Schema from: `http://`, `https://`, `file://`, `gitlab-ap
 |---------|---------|
 | `github.com/spf13/cobra` | CLI framework |
 | `github.com/spf13/pflag` | Flag parsing |
-| `github.com/xanzy/go-gitlab` | GitLab API client |
+| `gitlab.com/gitlab-org/api/client-go` | GitLab API client (successor of the deprecated `github.com/xanzy/go-gitlab`) |
 | `github.com/barkimedes/go-deepcopy` | Deep copy for defaults merging |
 | `sigs.k8s.io/yaml` | YAML marshaling |
 

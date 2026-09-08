@@ -594,6 +594,10 @@ Params:
   kindCamelCase : string - Resource kind in CamelCase format
   preprocess : bool - Whether the resource kind has a preprocessor
 
+Template context: preprocessors and every template string of the resource
+see `$.Metachart.Resource` (kind, name, component, context) and, at the deep
+render stage, `$.Metachart.ResourcePreRendered`.
+
 Return: dict in json format
 */}}
 {{- define "metachart.buildResource" }}
@@ -628,6 +632,19 @@ Return: dict in json format
     "definition" $resource
     "kind" $kind
   )) $context) | fromJson }}
+{{- /* Resource context: facts about the resource (`context` key, merged with
+       settings.<kind>.defaults.context above). Exposed to the preprocessors
+       and to every template of the resource as $.Metachart.Resource, never
+       rendered into the object */}}
+{{- $resourceContext := default dict $resource.context }}
+{{- $resource = omit $resource "context" }}
+{{- $metachartResource := dict
+  "kind" $kind
+  "name" $name
+  "component" $component
+  "context" $resourceContext
+}}
+{{- $_ = set $context "Metachart" (merge (dict "Resource" $metachartResource) (default dict $context.Metachart)) }}
 {{- /* Preprocessing */}}
 {{- $preprocessed := $resource }}
 {{- if $preprocess }}
@@ -641,9 +658,12 @@ Return: dict in json format
     )) $context) | fromJson }}
 {{- end }}
 {{- /* Resource for context */}}
-{{- $metachartAdditionalContext := dict "ResourcePreRendered" ($preprocessed | deepCopy) }}
+{{- $metachartAdditionalContext := dict
+  "ResourcePreRendered" ($preprocessed | deepCopy)
+  "Resource" $metachartResource
+}}
 {{- /* Render */}}
-{{- $result := include "metachart.deepRender" (merge (dict "params" (dict "data" $preprocessed) "Metachart" $metachartAdditionalContext) $) | fromJson }}
+{{- $result := include "metachart.deepRender" (merge (dict "params" (dict "data" $preprocessed) "Metachart" $metachartAdditionalContext) $context) | fromJson }}
 {{- /* Return */}}
 {{- $result | toJson }}
 {{- end }}

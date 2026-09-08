@@ -210,6 +210,43 @@ There is non-standard deep merge function is used here. It follows default
 them except overwrite. It makes possible, for example, to define volumes
 attached to any Release Pod.
 
+### Resource context
+
+A resource may carry a free form `context` key next to `enabled` and
+`related`: facts about the resource, for example its role in the release. It is
+merged with `settings.kind.defaults.context` during the defaults stage (so a
+kind can have a default context), removed from the object, and exposed to the
+preprocessors and to every template string of the resource as
+`$.Metachart.Resource`:
+
+- `kind`, `name`, `component` - as computed on the previous stages
+- `context` - the merged resource context, an empty dict when none is set
+
+Together with templated `enabled` this lets kind defaults depend on the
+resource they are applied to:
+
+```yaml
+settings:
+  deployments:
+    defaults:
+      context:
+        role: app
+  containers:
+    defaults:
+      envFrom:
+        - enabled: '{{ eq $.Metachart.Resource.context.role "app" }}'
+          configMapRef:
+            name: '{{ include "metachart.fullname" $ }}-env'
+
+deployments:
+  postgres:
+    context:
+      role: backing
+```
+
+The resource's own root `enabled` is evaluated at discovery, before the
+resource is built, and cannot refer to its context.
+
 ### Preprocess
 
 To define kind preprocessor create a file
@@ -237,6 +274,9 @@ their definition.
 ### Deep Render
 
 Discover all strings in resource definition and render them as Go templates.
+Besides the chart context the templates see `$.Metachart.Resource` (see
+[Resource context](#resource-context)) and `$.Metachart.ResourcePreRendered`,
+the resource as it is after preprocessing.
 
 ## Render YAML
 

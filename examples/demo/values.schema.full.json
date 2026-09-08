@@ -3511,6 +3511,9 @@
       "additionalProperties": false,
       "description": "Deployment enables declarative updates for Pods and ReplicaSets.",
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -3598,6 +3601,9 @@
           "description": "BinaryData contains the binary data. Each key must consist of alphanumeric characters, '-', '_' or '.'. BinaryData can contain byte sequences that are not in the UTF-8 range. The keys stored in BinaryData must not overlap with the ones in the Data field, this is enforced during validation process. Using this field will require 1.10+ apiserver and kubelet.",
           "type": "object"
         },
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "data": {
           "additionalProperties": {
             "type": "string"
@@ -3629,6 +3635,9 @@
       "additionalProperties": false,
       "description": "Pod is a collection of containers that can run on a host. This resource is created by clients and scheduled onto hosts.",
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -3933,6 +3942,9 @@
       "additionalProperties": false,
       "description": "Service is a named abstraction of software service (for example, mysql) consisting of local port (for example 3306) that the proxy listens on, and the selector that determines which pods will answer requests sent through the proxy.",
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -4039,6 +4051,10 @@
           "$ref": "#/definitions/metachart.interface.checksumEntryList"
         }
       },
+      "type": "object"
+    },
+    "metachart.interface.context": {
+      "description": "Facts about the resource, free form. Merged with `settings.\u003ckind\u003e.defaults.context` and exposed to the preprocessors and to every template of the resource as `$.Metachart.Resource.context`; never rendered into the object",
       "type": "object"
     }
   },

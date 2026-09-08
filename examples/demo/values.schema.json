@@ -2888,6 +2888,9 @@
     "metachart.api.io.k8s.api.apps.v1.Deployment": {
       "additionalProperties": false,
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -2966,6 +2969,9 @@
           },
           "type": "object"
         },
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "data": {
           "additionalProperties": {
             "type": "string"
@@ -2994,6 +3000,9 @@
     "metachart.api.io.k8s.api.core.v1.Pod": {
       "additionalProperties": false,
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -3254,6 +3263,9 @@
     "metachart.api.io.k8s.api.core.v1.Service": {
       "additionalProperties": false,
       "properties": {
+        "context": {
+          "$ref": "#/definitions/metachart.interface.context"
+        },
         "enabled": {
           "$ref": "#/definitions/metachart.interface.boolean"
         },
@@ -3352,6 +3364,9 @@
           "$ref": "#/definitions/metachart.interface.checksumEntryList"
         }
       },
+      "type": "object"
+    },
+    "metachart.interface.context": {
       "type": "object"
     }
   },

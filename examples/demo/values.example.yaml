@@ -8,6 +8,11 @@ deployments:
     #: Explicitly enable the resource
     enabled: true
 
+    #: Facts about the resource, see $.Metachart.Resource.context in
+    #: settings.deployments.defaults below (default role is `app`)
+    context:
+      role: frontend
+
     related:
       #: Create a service linked with the main Deployment
       services:
@@ -51,6 +56,13 @@ settings:
     disabled: false
   deployments:
     defaults:
+      #: Default resource context, merged under the resource's own `context`
+      context:
+        role: app
+      metadata:
+        annotations:
+          #: Templates of the resource see its context
+          example.metachart.iponweb.net/role: '{{ $.Metachart.Resource.context.role }}'
       spec:
         pod:
           metadata:

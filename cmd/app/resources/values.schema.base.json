@@ -17,6 +17,10 @@
         }
       ]
     },
+    "metachart.interface.context": {
+      "type": "object",
+      "description": "Facts about the resource, free form. Merged with `settings.<kind>.defaults.context` and exposed to the preprocessors and to every template of the resource as `$.Metachart.Resource.context`; never rendered into the object"
+    },
     "metachart.interface.checksumEntryList": {
       "anyOf": [
         {
