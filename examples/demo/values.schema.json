@@ -3313,7 +3313,14 @@
       "type": "string"
     },
     "metachart.interface.boolean": {
-      "type": "boolean"
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "metachart.interface.checksumEntryList": {
       "anyOf": [
@@ -3380,6 +3387,15 @@
           "type": "null"
         }
       ]
+    },
+    "global": {
+      "description": "Values shared with sub-charts. `settings` and every root key marked `global: true` in the chart config are merged into the top-level keys of the same name before rendering: local keys win, dictionaries merge recursively, lists are concatenated",
+      "properties": {
+        "settings": {
+          "$ref": "#/properties/settings"
+        }
+      },
+      "type": "object"
     },
     "pods": {
       "additionalProperties": false,

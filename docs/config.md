@@ -68,6 +68,10 @@ Keys:
   Default - `true`
 - `resources.KIND.defaults` - Whether the kind must have the `defaults`
   feature enabled. Default - `true`
+- `resources.KIND.global` - Whether `global.KIND` must be merged into `KIND`
+  before rendering (see [Apply global values](rendering.md#apply-global-values)).
+  Requires `root: true`. Default - `false`. `global.settings` is always merged
+  into `settings`.
 
 Example:
 ```yaml

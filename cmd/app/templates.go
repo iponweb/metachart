@@ -19,6 +19,7 @@ package app
 import (
 	"github.com/iponweb/metachart/pkg/chart"
 	"sigs.k8s.io/yaml"
+	"sort"
 	"strings"
 )
 
@@ -26,6 +27,11 @@ const resourcesYamlTpl = `
 {{- /* Resources definition */}}
 {{- define "metachart.settings" }}
 SETTINGS
+{{- end }}
+
+{{- /* Root keys merged from global.<key> by metachart.applyGlobal; settings is always merged */}}
+{{- define "metachart.globalKeys" }}
+GLOBAL_KEYS
 {{- end }}
 `
 
@@ -57,8 +63,21 @@ func (command *GenCommand) GenTemplates(c chart.Chart) (err error) {
 		return err
 	}
 
+	globalKeys := []string{}
+	for kind, config := range c.Config.Spec.Resources {
+		if config.Global {
+			globalKeys = append(globalKeys, kind)
+		}
+	}
+	sort.Strings(globalKeys)
+	renderedGlobalKeys, err := yaml.Marshal(&globalKeys)
+	if err != nil {
+		return err
+	}
+
 	rendered := resourcesYamlTpl
 	rendered = strings.Replace(rendered, "SETTINGS", strings.TrimSpace(string(renderedSettings)), -1)
+	rendered = strings.Replace(rendered, "GLOBAL_KEYS", strings.TrimSpace(string(renderedGlobalKeys)), -1)
 	rendered = strings.TrimSpace(rendered)
 
 	err = c.WriteTemplate("_settings.tpl", rendered)

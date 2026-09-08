@@ -356,6 +356,30 @@ func (command *GenCommand) GenSchema(c chart.Chart) error {
 		}
 	}
 
+	//: Global: root keys merged from `global.<kind>` by metachart.applyGlobal.
+	//: `global.settings` comes from the base schema.
+	global := GetPropertiesEntry(schema.Properties, "global")
+	if global == nil {
+		global = GenEmptyObjectDefinition()
+		schema.Properties["global"] = global
+	}
+	globalProperties := GetDefinitionProperties(global)
+	if globalProperties == nil {
+		globalProperties = map[string]interface{}{}
+		global["properties"] = globalProperties
+	}
+	for kind, definition := range c.Config.Spec.Resources {
+		if !definition.Global {
+			continue
+		}
+		if !definition.Root {
+			return fmt.Errorf("resource '%s': global requires root", kind)
+		}
+		globalProperties[kind] = map[string]interface{}{
+			"$ref": "#/properties/" + kind,
+		}
+	}
+
 	//: Checksums
 	checksums := GenEmptyObjectDefinition()
 	schema.Definitions[checksumsRef] = checksums

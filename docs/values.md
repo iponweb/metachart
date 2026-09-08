@@ -12,6 +12,12 @@ context: {}
 # name prefixes
 fullnameOverride:
 
+# global holds values shared with sub-charts: settings and every root key
+# marked `global: true` in the chart config are merged into the top-level keys
+# of the same name (local keys win, lists are concatenated)
+global:
+  settings: {}
+
 # settings configures chart behaviour
 settings:
   global:
@@ -31,7 +37,8 @@ settings:
 #: kind resources definition
 kind:
   name:
-    # enabled indicates whether the resource must be rendered
+    # enabled indicates whether the resource must be rendered: a boolean or a
+    # template string rendering to true/false
     enabled: true
 
     metadata:

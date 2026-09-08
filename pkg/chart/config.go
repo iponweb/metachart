@@ -68,6 +68,9 @@ type SchemaConfig struct {
 
 // ResourceDefinition describes a single Kubernetes resource kind that the
 // chart manages. Template, Root and Defaults default to true when omitted.
+// Global defaults to false: when set, `global.<kind>` is merged into the root
+// key `<kind>` before rendering by `metachart.applyGlobal`, the same way
+// `global.settings` is always merged into `settings`. Requires Root.
 type ResourceDefinition struct {
 	Template      bool   `json:"template"`
 	ApiVersion    string `json:"apiVersion"`
@@ -75,6 +78,7 @@ type ResourceDefinition struct {
 	JsonSchemaRef string `json:"jsonSchemaRef"`
 	Root          bool   `json:"root"`
 	Defaults      bool   `json:"defaults"`
+	Global        bool   `json:"global"`
 }
 
 func (c *ResourceDefinition) UnmarshalJSON(data []byte) error {
@@ -137,19 +141,19 @@ func (c *ResourceDefinition) UnmarshalJSON(data []byte) error {
 //	{apiVersion: "autoscaling/v2", kind: ["HorizontalPodAutoscaler"],
 //	  related: {deployments: {plural: ["deployments"]}}}
 type ResourceSelector struct {
-	APIVersion string                     `json:"apiVersion,omitempty"`
-	Kind       []string                   `json:"kind,omitempty"`
-	Plural     []string                   `json:"plural,omitempty"`
+	APIVersion string   `json:"apiVersion,omitempty"`
+	Kind       []string `json:"kind,omitempty"`
+	Plural     []string `json:"plural,omitempty"`
 	// Disallowed fields to append to the autodiscovered ConversionRule's
 	// disallowed list on top of the defaults (status, kind, apiVersion).
-	Disallowed []string           `json:"disallowed,omitempty"`
+	Disallowed []string `json:"disallowed,omitempty"`
 	// Properties to merge into the autodiscovered ConversionRule on top of the
 	// defaults (enabled, metadata). Later keys override earlier ones.
-	Properties map[string]string  `json:"properties,omitempty"`
+	Properties map[string]string `json:"properties,omitempty"`
 	// Related selectors whose matched plural names become the relationship keys
 	// in the ConversionRule. Each selector resolves to one resource; the plural
 	// name of that resource is used as the key.
-	Related    []ResourceSelector `json:"related,omitempty"`
+	Related []ResourceSelector `json:"related,omitempty"`
 }
 
 // AutodiscoverSource configures automatic resource discovery from a Kubernetes

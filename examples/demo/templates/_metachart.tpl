@@ -374,11 +374,122 @@ Return: dict in json format
 {{- end }}
 
 {{/*
+Evaluate the `enabled` flag of a definition (resource, container, list item).
+
+- Key absent: enabled
+- Boolean: as is
+- String: rendered as a Go template with the chart context, must produce
+  `true` or `false`, anything else fails the render
+- null: disabled (kept for compatibility with `ternary` semantics)
+
+Params:
+
+  definition : dict - Definition carrying the optional `enabled` key
+  name : string - Human readable name used in error messages
+
+Return: "true" | "false"
+*/}}
+{{- define "metachart.enabled" -}}
+{{- /* Cleanup context from the function params */}}
+{{- $params := $.params }}
+{{- $context := omit $ "params" }}
+{{- /* Get params */}}
+{{- $definition := default dict $params.definition }}
+{{- $name := default "resource" $params.name }}
+{{- /* Execution */}}
+{{- if not (hasKey $definition "enabled") -}}
+true
+{{- else -}}
+  {{- $value := get $definition "enabled" }}
+  {{- if kindIs "bool" $value -}}
+    {{ $value }}
+  {{- else if kindIs "invalid" $value -}}
+false
+  {{- else if kindIs "string" $value -}}
+    {{- $rendered := tpl $value $context | trim | lower }}
+    {{- if or (eq $rendered "true") (eq $rendered "false") -}}
+      {{ $rendered }}
+    {{- else -}}
+      {{- fail (printf "%s: enabled must render to true or false, got %q from %q" $name $rendered $value) }}
+    {{- end }}
+  {{- else -}}
+    {{- fail (printf "%s: enabled must be a boolean or a template string, got %s" $name (kindOf $value)) }}
+  {{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+Drop list items disabled through their `enabled` key and strip the key from
+the remaining ones. Items that are not dictionaries pass through untouched.
+
+Params:
+
+  items : slice - List of items
+  name : string - Human readable name used in error messages
+
+Return: slice in json format
+*/}}
+{{- define "metachart.filterEnabled" -}}
+{{- /* Cleanup context from the function params */}}
+{{- $params := $.params }}
+{{- $context := omit $ "params" }}
+{{- /* Get params */}}
+{{- $items := default list $params.items }}
+{{- $name := default "list" $params.name }}
+{{- /* Execution */}}
+{{- $result := list }}
+{{- range $index, $item := $items }}
+  {{- if not (kindIs "map" $item) }}
+    {{- $result = append $result $item }}
+  {{- else if not (hasKey $item "enabled") }}
+    {{- /* fast path: nothing to evaluate */}}
+    {{- $result = append $result $item }}
+  {{- else if kindIs "bool" (get $item "enabled") }}
+    {{- if get $item "enabled" }}
+      {{- $result = append $result (omit $item "enabled") }}
+    {{- end }}
+  {{- else if eq (include "metachart.enabled" (set (omit $context "params") "params" (dict
+        "definition" $item
+        "name" (printf "%s[%d]" $name $index)))) "true" }}
+    {{- $result = append $result (omit $item "enabled") }}
+  {{- end }}
+{{- end }}
+{{- /* Return */}}
+{{- $result | toJson }}
+{{- end }}
+
+{{/*
+Apply global values: `global.settings` and `global.<key>` for every root key
+listed by `metachart.globalKeys` (chart config `resources.<key>.global: true`)
+are merged into the top-level keys of the same name. Local keys win,
+dictionaries are merged recursively, lists are concatenated (the same semantics
+as kind defaults). Lets parent charts and values overlays define shared
+settings once. Mutates $.Values in place; idempotent, guarded by a marker.
+
+Return: nothing
+*/}}
+{{- define "metachart.applyGlobal" -}}
+{{- if not (hasKey $.Values "__metachart_global_applied") }}
+  {{- $global := default dict $.Values.global }}
+  {{- $keys := concat (list "settings") (default list (include "metachart.globalKeys" $ | fromYamlArray)) }}
+  {{- range $key := $keys }}
+    {{- if hasKey $global $key }}
+      {{- $merged := include "metachart.mergeConcatLists" (dict "params" (dict
+            "source" (get $global $key)
+            "target" (default dict (get $.Values $key)))) | fromJson }}
+      {{- $_ := set $.Values $key $merged }}
+    {{- end }}
+  {{- end }}
+  {{- $_ := set $.Values "__metachart_global_applied" true }}
+{{- end }}
+{{- end }}
+
+{{/*
 Discover all available resources (standalone and related) of specific kind.
 It takes into account:
 
 - If resource kind is not disable in settings
-- If resource definition.enabled is not false
+- If resource definition.enabled is not false (see metachart.enabled)
 
 Params:
 
@@ -401,7 +512,17 @@ Return: dict in json format
 {{- if not $kindSettings.disabled }}
   {{- if hasKey $.Values $kind }}
     {{- range $resourceName, $resourceDefinition := get $.Values $kind }}
-      {{- if (hasKey $resourceDefinition "enabled" | ternary $resourceDefinition.enabled true) }}
+      {{- $enabled := true }}
+      {{- if hasKey $resourceDefinition "enabled" }}
+        {{- if kindIs "string" (get $resourceDefinition "enabled") }}
+          {{- $enabled = eq (include "metachart.enabled" (set (omit $context "params") "params" (dict
+                "definition" $resourceDefinition
+                "name" (printf "%s.%s" $kind $resourceName)))) "true" }}
+        {{- else }}
+          {{- $enabled = get $resourceDefinition "enabled" }}
+        {{- end }}
+      {{- end }}
+      {{- if $enabled }}
         {{- $_ := set $result $resourceName $resourceDefinition}}
       {{- end }}
     {{- end }}
@@ -416,16 +537,38 @@ Return: dict in json format
     {{- if not $resourceSettings.disabled }}
       {{- if hasKey $.Values $settingsKind }}
         {{- range $resourceName, $resourceDefinition := get $.Values $settingsKind }}
-          {{- if (hasKey $resourceDefinition "enabled" | ternary $resourceDefinition.enabled true) }}
+          {{- $enabled := true }}
+          {{- if hasKey $resourceDefinition "enabled" }}
+            {{- if kindIs "string" (get $resourceDefinition "enabled") }}
+              {{- $enabled = eq (include "metachart.enabled" (set (omit $context "params") "params" (dict
+                    "definition" $resourceDefinition
+                    "name" (printf "%s.%s" $settingsKind $resourceName)))) "true" }}
+            {{- else }}
+              {{- $enabled = get $resourceDefinition "enabled" }}
+            {{- end }}
+          {{- end }}
+          {{- if $enabled }}
             {{- $resourceRelated := default dict $resourceDefinition.related }}
              {{- if hasKey $resourceRelated $kind }}
               {{- range $name, $definition := get $resourceRelated $kind }}
-                {{- if hasKey $result $name }}
-                  {{- fail (printf "Resource %s/%s defined in global and related scopes" $kind $name) }}
-                {{- else }}
-                  {{- $patchedDefinition := $definition | deepCopy }}
-                  {{- $_ := set $patchedDefinition "relatedComponent" (printf "%s-%s" $settingsKind $resourceName)}}
-                  {{- $_ = set $result $name $patchedDefinition}}
+                {{- $enabled := true }}
+                {{- if hasKey $definition "enabled" }}
+                  {{- if kindIs "string" (get $definition "enabled") }}
+                    {{- $enabled = eq (include "metachart.enabled" (set (omit $context "params") "params" (dict
+                          "definition" $definition
+                          "name" (printf "%s.%s.related.%s.%s" $settingsKind $resourceName $kind $name)))) "true" }}
+                  {{- else }}
+                    {{- $enabled = get $definition "enabled" }}
+                  {{- end }}
+                {{- end }}
+                {{- if $enabled }}
+                  {{- if hasKey $result $name }}
+                    {{- fail (printf "Resource %s/%s defined in global and related scopes" $kind $name) }}
+                  {{- else }}
+                    {{- $patchedDefinition := $definition | deepCopy }}
+                    {{- $_ := set $patchedDefinition "relatedComponent" (printf "%s-%s" $settingsKind $resourceName)}}
+                    {{- $_ = set $result $name $patchedDefinition}}
+                  {{- end }}
                 {{- end }}
               {{- end }}
             {{- end }}
@@ -516,6 +659,7 @@ Return: yaml
 {{- $context := omit $ "params" }}
 {{- /* Get params */}}
 {{- /* Execution */}}
+{{- include "metachart.applyGlobal" $context -}}
 {{- $kinds := (include "metachart.settings" $context) | fromYaml | keys }}
 {{- $result := include "metachart.renderKinds" (merge (dict "params"
     (dict

@@ -17,3 +17,8 @@ services:
   kindCamelCase: Service
   preprocess: true
 {{- end }}
+
+{{- /* Root keys merged from global.<key> by metachart.applyGlobal; settings is always merged */}}
+{{- define "metachart.globalKeys" }}
+[]
+{{- end }}

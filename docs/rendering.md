@@ -65,7 +65,35 @@ There are 2 resource types:
   - ``related-resource-name`` - Related resource name
 
 Only resource with `enabled: true` will be discovered. `true` is a default
-value here.
+value here. `enabled` accepts a boolean or a string: a string is rendered as a
+Go template with the chart context (`$.Values`, `$.Release`) and must produce
+`true` or `false`, anything else fails the render. The same rule is
+implemented by the `metachart.enabled` function and is meant to be reused by
+preprocessors for nested definitions (containers, list items), so one
+`enabled` semantics covers the whole values file:
+
+```yaml
+deployments:
+  proxy:
+    enabled: '{{ $.Values.context.database.enabled }}'
+```
+
+`metachart.filterEnabled` drops dictionaries with `enabled: false` from a list
+and strips the key from the rest; a chart exposes it for a list by wrapping the
+item type in a ConversionRule with `enabled: metachart.interface.boolean` and
+calling the function from the kind preprocessor.
+
+## Apply global values
+
+Before the kinds are discovered `metachart.applyGlobal` merges `global.settings`
+into `settings` and `global.<key>` into every root key marked
+`resources.<key>.global: true` in the chart config (the list is generated into
+`metachart.globalKeys`). Local keys win, dictionaries are merged recursively,
+lists are concatenated, the same rule as for kind defaults. This lets a parent
+chart that includes the chart several times under different aliases, or a
+shared values overlay, define shared values once. The merge mutates `$.Values`
+in place and runs once per render; custom templates rendered outside
+`metachart.renderAll` call `metachart.applyGlobal` themselves.
 
 ## Build resource
 

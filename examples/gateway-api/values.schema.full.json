@@ -2176,7 +2176,15 @@
       "type": "string"
     },
     "metachart.interface.boolean": {
-      "type": "boolean"
+      "description": "Boolean flag. A string is rendered as a Go template with the chart context and must produce `true` or `false`",
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "metachart.interface.checksumEntryList": {
       "anyOf": [
@@ -2261,6 +2269,15 @@
       "patternProperties": {
         "^[a-z][0-9a-z]*(-[0-9a-z]+)*$": {
           "$ref": "#/definitions/metachart.api.io.k8s.networking.gateway.v1.Gateway"
+        }
+      },
+      "type": "object"
+    },
+    "global": {
+      "description": "Values shared with sub-charts. `settings` and every root key marked `global: true` in the chart config are merged into the top-level keys of the same name before rendering: local keys win, dictionaries merge recursively, lists are concatenated",
+      "properties": {
+        "settings": {
+          "$ref": "#/properties/settings"
         }
       },
       "type": "object"

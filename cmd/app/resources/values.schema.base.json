@@ -7,7 +7,15 @@
       "pattern": "^[a-z][0-9a-z]*(-[0-9a-z]+)*$"
     },
     "metachart.interface.boolean": {
-      "type": "boolean"
+      "description": "Boolean flag. A string is rendered as a Go template with the chart context and must produce `true` or `false`",
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "metachart.interface.checksumEntryList": {
       "anyOf": [
@@ -37,6 +45,15 @@
     "context": {
       "type": "object",
       "description": "Any content which can be used for config rendering without schema defined by the chart"
+    },
+    "global": {
+      "type": "object",
+      "description": "Values shared with sub-charts. `settings` and every root key marked `global: true` in the chart config are merged into the top-level keys of the same name before rendering: local keys win, dictionaries merge recursively, lists are concatenated",
+      "properties": {
+        "settings": {
+          "$ref": "#/properties/settings"
+        }
+      }
     },
     "settings": {
       "type": "object",
