@@ -471,7 +471,7 @@ Return: nothing
 {{- define "metachart.applyGlobal" -}}
 {{- if not (hasKey $.Values "__metachart_global_applied") }}
   {{- $global := default dict $.Values.global }}
-  {{- $keys := concat (list "settings") (default list (include "metachart.globalKeys" $ | fromYamlArray)) }}
+  {{- $keys := concat (list "settings" "context") (default list (include "metachart.globalKeys" $ | fromYamlArray)) }}
   {{- range $key := $keys }}
     {{- if hasKey $global $key }}
       {{- $merged := include "metachart.mergeConcatLists" (dict "params" (dict
@@ -595,8 +595,10 @@ Params:
   preprocess : bool - Whether the resource kind has a preprocessor
 
 Template context: preprocessors and every template string of the resource
-see `$.Metachart.Resource` (kind, name, component, context) and, at the deep
-render stage, `$.Metachart.ResourcePreRendered`.
+see `$.Metachart.Resource` (kind, name, component, context),
+`$.Metachart.Context` (the effective context at the point of evaluation, the
+resource context unless a preprocessor narrowed it for a nested definition)
+and, at the deep render stage, `$.Metachart.ResourcePreRendered`.
 
 Return: dict in json format
 */}}
@@ -632,11 +634,17 @@ Return: dict in json format
     "definition" $resource
     "kind" $kind
   )) $context) | fromJson }}
-{{- /* Resource context: facts about the resource (`context` key, merged with
-       settings.<kind>.defaults.context above). Exposed to the preprocessors
-       and to every template of the resource as $.Metachart.Resource, never
-       rendered into the object */}}
-{{- $resourceContext := default dict $resource.context }}
+{{- /* Resource context: three layers, the upper one wins. The release
+       context ($.Values.context, global.context already merged into it by
+       metachart.applyGlobal), the kind defaults (settings.<kind>.defaults.context,
+       merged into the resource above) and the resource's own `context`.
+       Exposed to the preprocessors and to every template of the resource as
+       $.Metachart.Resource, never rendered into the object */}}
+{{- include "metachart.applyGlobal" $context }}
+{{- $resourceContext := include "metachart.mergeConcatLists" (dict "params" (dict
+  "source" (default dict $.Values.context)
+  "target" (default dict $resource.context)
+)) | fromJson }}
 {{- $resource = omit $resource "context" }}
 {{- $metachartResource := dict
   "kind" $kind
@@ -644,7 +652,15 @@ Return: dict in json format
   "component" $component
   "context" $resourceContext
 }}
-{{- $_ = set $context "Metachart" (merge (dict "Resource" $metachartResource) (default dict $context.Metachart)) }}
+{{- /* Metachart.Context is the effective context at the point of evaluation:
+       the resource context here, narrowed by preprocessors for nested
+       definitions (a container, an item) */}}
+{{- /* Built with `set`, not `merge`: sprig merge treats false as empty and
+       would overwrite it with the value of another layer */}}
+{{- $metachart := deepCopy (default dict $context.Metachart) }}
+{{- $_ = set $metachart "Resource" $metachartResource }}
+{{- $_ = set $metachart "Context" $resourceContext }}
+{{- $_ = set $context "Metachart" $metachart }}
 {{- /* Preprocessing */}}
 {{- $preprocessed := $resource }}
 {{- if $preprocess }}
@@ -658,12 +674,9 @@ Return: dict in json format
     )) $context) | fromJson }}
 {{- end }}
 {{- /* Resource for context */}}
-{{- $metachartAdditionalContext := dict
-  "ResourcePreRendered" ($preprocessed | deepCopy)
-  "Resource" $metachartResource
-}}
+{{- $_ = set $metachart "ResourcePreRendered" ($preprocessed | deepCopy) }}
 {{- /* Render */}}
-{{- $result := include "metachart.deepRender" (merge (dict "params" (dict "data" $preprocessed) "Metachart" $metachartAdditionalContext) $context) | fromJson }}
+{{- $result := include "metachart.deepRender" (set (omit $context "params") "params" (dict "data" $preprocessed)) | fromJson }}
 {{- /* Return */}}
 {{- $result | toJson }}
 {{- end }}

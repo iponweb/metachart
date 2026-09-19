@@ -61,8 +61,10 @@ settings:
         role: app
       metadata:
         annotations:
-          #: Templates of the resource see its context
-          example.metachart.iponweb.net/role: '{{ $.Metachart.Resource.context.role }}'
+          #: Templates of the resource see its context: its own keys, the kind
+          #: defaults and the release context (context.contextVariable above)
+          example.metachart.iponweb.net/role: '{{ $.Metachart.Context.role }}'
+          example.metachart.iponweb.net/from-release: '{{ $.Metachart.Context.contextVariable }}'
       spec:
         pod:
           metadata:

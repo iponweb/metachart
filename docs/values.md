@@ -12,11 +12,12 @@ context: {}
 # name prefixes
 fullnameOverride:
 
-# global holds values shared with sub-charts: settings and every root key
-# marked `global: true` in the chart config are merged into the top-level keys
-# of the same name (local keys win, lists are concatenated)
+# global holds values shared with sub-charts: settings, context and every root
+# key marked `global: true` in the chart config are merged into the top-level
+# keys of the same name (local keys win, lists are concatenated)
 global:
   settings: {}
+  context: {}
 
 # settings configures chart behaviour
 settings:
@@ -48,8 +49,10 @@ kind:
     # related feature settings
     related: {}
 
-    # context holds free form facts about the resource, merged with
-    # settings.kind.defaults.context and exposed to templates as
-    # $.Metachart.Resource.context; not rendered into the object
+    # context holds free form facts about the resource; the resource context is
+    # the release context merged with settings.kind.defaults.context and with
+    # this key (the resource wins), exposed to templates as
+    # $.Metachart.Context (and $.Metachart.Resource.context); not rendered
+    # into the object
     context: {}
 ```

@@ -1976,7 +1976,7 @@
       "type": "object"
     },
     "context": {
-      "description": "Any content which can be used for config rendering without schema defined by the chart",
+      "description": "Release context: free form facts used by templates. Merged with `global.context` before rendering and inherited by every resource as the bottom layer of its own `context` ($.Metachart.Resource.context)",
       "type": "object"
     },
     "fullnameOverride": {
@@ -2008,8 +2008,11 @@
       "type": "object"
     },
     "global": {
-      "description": "Values shared with sub-charts. `settings` and every root key marked `global: true` in the chart config are merged into the top-level keys of the same name before rendering: local keys win, dictionaries merge recursively, lists are concatenated",
+      "description": "Values shared with sub-charts. `settings`, `context` and every root key marked `global: true` in the chart config are merged into the top-level keys of the same name before rendering: local keys win, dictionaries merge recursively, lists are concatenated",
       "properties": {
+        "context": {
+          "$ref": "#/properties/context"
+        },
         "settings": {
           "$ref": "#/properties/settings"
         }

@@ -86,9 +86,9 @@ calling the function from the kind preprocessor.
 ## Apply global values
 
 Before the kinds are discovered `metachart.applyGlobal` merges `global.settings`
-into `settings` and `global.<key>` into every root key marked
-`resources.<key>.global: true` in the chart config (the list is generated into
-`metachart.globalKeys`). Local keys win, dictionaries are merged recursively,
+into `settings`, `global.context` into `context` and `global.<key>` into every
+root key marked `resources.<key>.global: true` in the chart config (the list is
+generated into `metachart.globalKeys`). Local keys win, dictionaries are merged recursively,
 lists are concatenated, the same rule as for kind defaults. This lets a parent
 chart that includes the chart several times under different aliases, or a
 shared values overlay, define shared values once. The merge mutates `$.Values`
@@ -213,35 +213,52 @@ attached to any Release Pod.
 ### Resource context
 
 A resource may carry a free form `context` key next to `enabled` and
-`related`: facts about the resource, for example its role in the release. It is
-merged with `settings.kind.defaults.context` during the defaults stage (so a
-kind can have a default context), removed from the object, and exposed to the
-preprocessors and to every template string of the resource as
-`$.Metachart.Resource`:
+`related`: facts about the resource. The resource context is built from three
+layers, the upper one wins, dictionaries merge recursively, lists are
+concatenated (`metachart.mergeConcatLists`):
 
-- `kind`, `name`, `component` - as computed on the previous stages
-- `context` - the merged resource context, an empty dict when none is set
+1. the release `context` (with `global.context` merged into it, see
+   [Apply global values](#apply-global-values));
+2. `settings.kind.defaults.context`, applied during the defaults stage;
+3. the resource's own `context`.
 
-Together with templated `enabled` this lets kind defaults depend on the
-resource they are applied to:
+It is removed from the object and exposed to the preprocessors and to every
+template string of the resource:
+
+- `$.Metachart.Context` - the effective context at the point of evaluation.
+  At the resource level it is the merged resource context; a preprocessor
+  narrows it for a nested definition it processes (a chart may give containers
+  their own `context`, merged over the resource context, and evaluate the
+  `enabled` of their items against it). Templates read facts from here and
+  need not know at which level they are evaluated.
+- `$.Metachart.Resource` - the identity of the resource: `kind`, `name`,
+  `component` and `context` (equal to `$.Metachart.Context` at the resource
+  level).
+
+So a fact of the release is readable on every resource as
+`$.Metachart.Context.<key>`, and a resource overrides it for itself by writing
+the same key into its own `context`. Together with templated
+`enabled` this lets kind defaults depend on the resource they are applied to:
 
 ```yaml
+context:
+  database:
+    enabled: true
+
 settings:
-  deployments:
-    defaults:
-      context:
-        role: app
   containers:
     defaults:
       envFrom:
-        - enabled: '{{ eq $.Metachart.Resource.context.role "app" }}'
-          configMapRef:
-            name: '{{ include "metachart.fullname" $ }}-env'
+        - enabled: '{{ $.Metachart.Context.database.enabled }}'
+          secretRef:
+            name: '{{ include "metachart.fullname" $ }}-db'
 
 deployments:
+  web: {}            # gets the Secret: database.enabled comes from the release
   postgres:
     context:
-      role: backing
+      database:
+        enabled: false   # overrides the release fact for this resource only
 ```
 
 The resource's own root `enabled` is evaluated at discovery, before the
@@ -274,9 +291,11 @@ their definition.
 ### Deep Render
 
 Discover all strings in resource definition and render them as Go templates.
-Besides the chart context the templates see `$.Metachart.Resource` (see
-[Resource context](#resource-context)) and `$.Metachart.ResourcePreRendered`,
-the resource as it is after preprocessing.
+Besides the chart context the templates see `$.Metachart.Context` and
+`$.Metachart.Resource` (see [Resource context](#resource-context)) and
+`$.Metachart.ResourcePreRendered`, the resource as it is after preprocessing.
+Strings are rendered at the resource level, so `$.Metachart.Context` is the
+resource context here even for strings inside nested definitions.
 
 ## Render YAML
 
